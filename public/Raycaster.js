@@ -1,11 +1,13 @@
-import {clampAngle} from "./Utilities";
+import {clampAngle} from "./Utilities.js";
 
-class Raycaster {
-    constructor(fov, stripWidth, canvasWidth, canvasHeight) {
+
+export default class Raycaster {
+    constructor(fov, stripWidth, canvasWidth, canvasHeight, renderEngine) {
 
         this.mapWidth = 0;
         this.mapHeight = 0;
 
+        this.renderEngine = renderEngine;
 
         this.screenWidth = canvasWidth;
         this.screenHeight = canvasHeight;
@@ -16,7 +18,7 @@ class Raycaster {
         //ilość promieni "wystrzeliwanych przez emiter"
         this.numRays = Math.ceil(this.screenWidth / this.stripWidth);
 
-        this.viewDist = ( this.screenWidth / 2) / Math.tan((this.fov / 2));
+        this.viewDist = (this.screenWidth / 2) / Math.tan((this.fov / 2));
     }
 
 
@@ -26,9 +28,9 @@ class Raycaster {
     }
 
 
-    performRayCast() {
+    performRayCast(player, map) {
 
-
+        let that = this;
         for (let i = 0; i < this.numRays; i++) {
             // pozycja stripa na ekranie
             let rayScreenPos = (-this.numRays / 2 + i) * this.stripWidth;
@@ -60,7 +62,7 @@ class Raycaster {
             let textureX;	// część tekstury która będzie renderowana
 
 
-            let wallIsHorizontal = false;
+            let isDark = false;
 
             // Sprawdzanie pionowych zderzeń (vertical)
 
@@ -71,7 +73,7 @@ class Raycaster {
             let x = right ? Math.ceil(player.x) : Math.floor(player.x);	//startowa pozycja x
             let y = player.y + (x - player.x) * angleTan;			// startowa pozycja y, poprawiona o przesunięcie z linijki wyżej
 
-            while (x >= 0 && x < this.mapWidth && y >= 0 && y < this.mapHeight) {  //dopoki x i y mieszczą sie w granicach mapy
+            while (x >= 0 && x < that.mapWidth && y >= 0 && y < that.mapHeight) {  //dopoki x i y mieszczą sie w granicach mapy
                 let wallX = Math.floor(x + (right ? 0 : -1));
                 let wallY = Math.floor(y);
 
@@ -86,9 +88,7 @@ class Raycaster {
                     if (!right) textureX = 1 - textureX; // jeżeli patrzymy w lewo tekstura musi byc odwrócona
 
 
-                    wallIsHorizontal = true;
-
-                    break;
+                    break; //znalazł ściane wiec dalej nie musi szulać
                 }
                 x += dXVer;
                 y += dYVer;
@@ -103,7 +103,7 @@ class Raycaster {
             y = up ? Math.floor(player.y) : Math.ceil(player.y);
             x = player.x + (y - player.y) * angleCtg;
 
-            while (x >= 0 && x < this.mapWidth && y >= 0 && y < this.mapHeight) {
+            while (x >= 0 && x < that.mapWidth && y >= 0 && y < that.mapHeight) {
                 let wallY = Math.floor(y + (up ? -1 : 0));
                 let wallX = Math.floor(x);
                 if (map[wallY][wallX] > 0) {
@@ -115,7 +115,7 @@ class Raycaster {
 
                     if (!dist || blockDist < dist) {
                         dist = blockDist;
-
+                        isDark = true;
                         textureID = map[wallY][wallX];
                         textureX = x % 1;
                         if (up) textureX = 1 - textureX;
@@ -133,15 +133,16 @@ class Raycaster {
                 //pozbycie sie efektu rybiego oka
                 dist = dist * Math.cos(player.rot - rayAngle);
 
-                let height = this.viewDist / dist;
+                let height = that.viewDist / dist;
 
-                let y = ( this.screenHeight - height) / 2;
-                let x = stripIdx * this.stripWidth
+                let y = (that.screenHeight - height) / 2;
+                let x = stripIdx * that.stripWidth
 
                 textureX *= 63;// tekstruy maja po 64 pikesele
 
 
-                ctx.drawImage(textures[textureID], textureX, 0, this.stripWidth, 63, x, y, this.stripWidth, height);
+                that.renderEngine.drawStrip(textureID, textureX, x, y, that.stripWidth, height, isDark)
+
             }
 
         }

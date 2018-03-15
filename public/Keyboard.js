@@ -1,10 +1,12 @@
-class Keyboard {
-    constructor() {
+export default class Keyboard {
+    constructor(player) {
+        this.player = player;
 
     }
 
     bindKeysInGame() {
         document.addEventListener('keydown', bindInGameKeyDown)
+        let that = this;
 
         function bindInGameKeyDown(e) {
 
@@ -12,19 +14,19 @@ class Keyboard {
             switch (e.keyCode) { // which key was pressed?
 
                 case 38: // up, move player forward, ie. increase speed
-                    player.speed = 1;
+                    that.player.speed = 1;
                     break;
 
                 case 40: // down, move player backward, set negative speed
-                    player.speed = -1;
+                    that.player.speed = -1;
                     break;
 
                 case 37: // left, rotate player left
-                    player.dir = -1;
+                    that.player.direction = -1;
                     break;
 
                 case 39: // right, rotate player right
-                    player.dir = 1;
+                    that.player.direction = 1;
                     break;
             }
         }
@@ -35,11 +37,11 @@ class Keyboard {
             switch (e.keyCode) {
                 case 38:
                 case 40:
-                    player.speed = 0;	// stop the player movement when up/down key is released
+                    that.player.speed = 0;	// stop the player movement when up/down key is released
                     break;
                 case 37:
                 case 39:
-                    player.dir = 0;
+                    that.player.direction = 0;
                     break;
             }
         }

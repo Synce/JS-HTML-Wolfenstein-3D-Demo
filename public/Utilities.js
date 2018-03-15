@@ -10,7 +10,7 @@ Math.degrees = function (radians) {
 
 
 export function clampAngle(angle) {   //funckja zwracajaca podany kat w przedziałe 0-2PI
-    if (angle > 2 * Math.PI * 2)
+    if (angle > 2 * Math.PI)
         return angle - Math.PI * 2;
     if (angle < 0)
         return angle + Math.PI * 2;

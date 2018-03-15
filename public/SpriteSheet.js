@@ -6,6 +6,7 @@ export default class SpriteSheet {
     }
 
     defineAll(width, height) {
+        console.log(this.image)
         let texturesY = this.image.height / height;
         let texturesX = this.image.width / width;
         for (let y = 0; y < texturesY; y++)
