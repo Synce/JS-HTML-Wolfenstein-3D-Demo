@@ -1,6 +1,7 @@
 export default class Keyboard {
     constructor(player) {
         this.player = player;
+        this.pressedKeys = [];
 
     }
 
@@ -9,42 +10,32 @@ export default class Keyboard {
         let that = this;
 
         function bindInGameKeyDown(e) {
-
-
-            switch (e.keyCode) { // which key was pressed?
-
-                case 38: // up, move player forward, ie. increase speed
-                    that.player.speed = 1;
-                    break;
-
-                case 40: // down, move player backward, set negative speed
-                    that.player.speed = -1;
-                    break;
-
-                case 37: // left, rotate player left
-                    that.player.direction = -1;
-                    break;
-
-                case 39: // right, rotate player right
-                    that.player.direction = 1;
-                    break;
-            }
+            if (!that.pressedKeys.includes(e.keyCode))
+                that.pressedKeys.push(e.keyCode)
         }
 
         document.addEventListener('keyup', bindInGameKeyUp)
 
         function bindInGameKeyUp(e) {
-            switch (e.keyCode) {
-                case 38:
-                case 40:
-                    that.player.speed = 0;	// stop the player movement when up/down key is released
-                    break;
-                case 37:
-                case 39:
-                    that.player.direction = 0;
-                    break;
-            }
+            that.pressedKeys.splice(that.pressedKeys.indexOf(e.keyCode), 1);
         }
+    }
+
+    update() {
+
+        if (this.pressedKeys.includes(37) && !this.pressedKeys.includes(39))
+            this.player.direction = -1;
+        else if (this.pressedKeys.includes(39) && !this.pressedKeys.includes(37))
+            this.player.direction = 1;
+        else
+            this.player.direction = 0;
+
+        if (this.pressedKeys.includes(38) && !this.pressedKeys.includes(40))
+            this.player.speed = 1;
+        else if (this.pressedKeys.includes(40) && !this.pressedKeys.includes(38))
+            this.player.speed = -1;
+        else
+            this.player.speed = 0;
     }
 }
 

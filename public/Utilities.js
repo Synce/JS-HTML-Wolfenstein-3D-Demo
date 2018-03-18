@@ -12,8 +12,11 @@ Math.degrees = function (radians) {
 export function clampAngle(angle) {   //funckja zwracajaca podany kat w przedziałe 0-2PI
     if (angle > 2 * Math.PI)
         return angle - Math.PI * 2;
+    if (angle < -Math.PI * 2)
+        return angle + Math.PI * 4;
     if (angle < 0)
         return angle + Math.PI * 2;
+
     return angle
 }
 
@@ -26,6 +29,17 @@ export function loadImage(url) {
         })
         image.src = url;
     })
+}
+
+export function loadJSON(url) {
+    return fetch(url).then(resolve => resolve.json())
+
+}
+
+export function RectCirCollision(RectX, RectY, CircleX, CircleY, CircleRadius, RectWidth = 1, RectHeight = 1) {
+    let DeltaX = CircleX - Math.max(RectX, Math.min(CircleX, RectX + RectWidth));
+    let DeltaY = CircleY - Math.max(RectY, Math.min(CircleY, RectY + RectHeight));
+    return (Math.pow(DeltaX, 2) + Math.pow(DeltaY, 2)) < (Math.pow(CircleRadius, 2));
 }
 
 

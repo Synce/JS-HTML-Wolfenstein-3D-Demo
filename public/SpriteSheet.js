@@ -19,5 +19,9 @@ export default class SpriteSheet {
             }
     }
 
+    getSprite(id) {
+        return this.textures[id];
+    }
+
 
 }

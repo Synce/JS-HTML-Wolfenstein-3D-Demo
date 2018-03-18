@@ -1,4 +1,4 @@
-import {clampAngle} from "./Utilities.js";
+import {clampAngle, RectCirCollision} from "./Utilities.js";
 
 export default class Player {
     constructor(x, y, moveSpeed, rotSpeed) {
@@ -11,31 +11,63 @@ export default class Player {
         this.rotSpeed = Math.radians(rotSpeed)	// szybkosc obracania sie na tick;
     }
 
-    move() {
-        let moveStep = this.speed * this.moveSpeed;	// this will move this far along the current direction vector
+    move(map) {
+        let move = this.speed * this.moveSpeed;
 
-        this.rotation += this.direction * this.rotSpeed; // add rotation if this is rotating (this.dir != 0)
+        this.rotation += this.direction * this.rotSpeed;
         this.rotation = clampAngle(this.rotation)
-        console.log(Math.degrees(this.rotation))
-        let newX = this.x + Math.cos(this.rotation) * moveStep;	// calculate new this position with simple trigonometry
-        let newY = this.y + Math.sin(this.rotation) * moveStep;
 
-        //  if (collisionCheck(newX, newY)) {	// are we allowed to move to the new position?
-        //       return; // no, bail out.
-        //   }
+        let goX = this.x + Math.cos(this.rotation) * move;
+        let goY = this.y + Math.sin(this.rotation) * move;
 
-        this.x = newX; // set new position
-        this.y = newY;
+        let x = Math.floor(goX)
+        let y = Math.floor(goY)
+        if (y > 0 && y < map.getMapSize().y && x > 0 && x < map.getMapSize().x) {
 
-        function collisionCheck(x, y) {
-            // first make sure that we cannot move outside the boundaries of the level
-            if (y < 0 || y >= mapHeight || x < 0 || x >= mapWidth)
-                return true;
 
-            // return true if the map block is not 0, ie. if there is a blocking wall.
-            return (map[Math.floor(y)][Math.floor(x)] != 0);
+            let right = (this.rotation > Math.PI * 2 * 0.75 || this.rotation < Math.PI * 2 * 0.25);
+            let up = (this.rotation < 0 || this.rotation > Math.PI);
+
+            let checkX, checkY
+
+            if ((right && this.speed > 0) || (!right && this.speed < 0))
+                checkX = 1;
+            else
+                checkX = -1;
+            if ((up && this.speed > 0) || (!up && this.speed < 0))
+                checkY = -1;
+            else
+                checkY = 1;
+
+
+            let check = true;
+
+            if (map.getMap()[y + checkY][x] > 0 && RectCirCollision(x, y + checkY, this.x, goY, 0.4)) {
+                this.y = checkY > 0 ? y + 0.6 : y + 0.4
+                check = false;
+            }
+            else
+                this.y = goY;
+
+            if (map.getMap()[y][x + checkX] > 0 && RectCirCollision(x + checkX, y, goX, this.y, 0.4)) {
+                this.x = checkX > 0 ? x + 0.6 : x + 0.4
+                check = false;  
+            }
+            else
+                this.x = goX;
+
+            let angle = this.rotation % Math.PI
+
+
+            if (check && map.getMap()[y + checkY][x + checkX] > 0 && RectCirCollision(x + checkX, y + checkY, goX, goY, 0.4)) {
+                if (angle > Math.Pi / 4)
+                    this.y = checkY > 0 ? y + 0.6 : y + 0.4
+                else
+                    this.x = checkX > 0 ? x + 0.6 : x + 0.4
+            }
         }
     }
+
 
     getInfoForRayCast() {
         return {
