@@ -23,7 +23,7 @@ export default class PlayerRaycaster extends Raycaster {
     }
 
 
-    performRayCast(player, map, objects) {
+    performRayCast(player, map, objects, specialTiles) {
 
 
         let that = this;
@@ -96,9 +96,23 @@ export default class PlayerRaycaster extends Raycaster {
             while (x >= 1 && x < that.mapWidth && y >= 0 && y < that.mapHeight) {  //dopoki x i y mieszczą sie w granicach mapy
                 let wallX = Math.floor(x + (right ? 0 : -1)); //-1 bo zebiramy hit z prawej strony a jak tego nie ma
                 let wallY = Math.floor(y);
+                let tile = that.checkForSpecialTiles(wallX, wallY, specialTiles, 0);
 
+                if (tile) {
+                    x += dXVer * tile.additionalDistance;
+                    y += dYVer * tile.additionalDistance;
 
-                if (map[wallY][wallX] > 0) { //sprawdzanie czy punkt jest ścianą
+                    let distX = x - player.x;
+                    let distY = y - player.y;
+                    dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+
+                    textureID = tile.wallID;
+                    textureX = y % 1;
+                    if (!right) textureX = 1 - textureX;
+
+                    break;
+                }
+                else if (map[wallY][wallX] > 0) { //sprawdzanie czy punkt jest ścianą
                     let distX = x - player.x;
                     let distY = y - player.y;
                     dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));	// dystans do ściany do kwadratu (Pitagoras)
@@ -123,29 +137,54 @@ export default class PlayerRaycaster extends Raycaster {
             y = up ? Math.floor(player.y) : Math.ceil(player.y);
             x = player.x + (y - player.y) * angleCtg;
 
+
             while (x >= 0 && x < that.mapWidth && y >= 1 && y < that.mapHeight) {
                 let wallY = Math.floor(y + (up ? -1 : 0));
                 let wallX = Math.floor(x);
 
-                if (map[wallY][wallX] > 0) {
+                let tile = that.checkForSpecialTiles(wallX, wallY, specialTiles, 1);
+
+                if (tile) {
+                    x += dXVer * tile.additionalDistance;
+                    y += dYVer * tile.additionalDistance;
                     let distX = x - player.x;
                     let distY = y - player.y;
                     let blockDist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
-
-                    //sprawdzanie ktory dystans jest krótszy
-
-                    if (!dist || blockDist < dist) {
+                    if ((!dist || blockDist < dist)) {
                         dist = blockDist;
-                        isDark = true;
-                        textureID = map[wallY][wallX];
+
+                        if (tile.dark)
+                            isDark = true;
+                        textureID = tile.wallID;
+
                         textureX = x % 1;
                         if (up) textureX = 1 - textureX;
+
                     }
                     break;
                 }
+                else if (map[wallY][wallX] > 0) {
+                    let distX = x - player.x;
+                    let distY = y - player.y;
+                    let blockDist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+                    if ((!dist || blockDist < dist)) {
+                        dist = blockDist;
+                        textureID = map[wallY][wallX];
+                        isDark = true;
+                        textureX = x % 1;
+                        if (up) textureX = 1 - textureX;
+
+
+                    }
+                    break;
+                }
+           
+
+
                 x += dXHor;
                 y += dYHor;
             }
+
 
             if (dist) {
 
@@ -176,6 +215,16 @@ export default class PlayerRaycaster extends Raycaster {
 
         }
 
+
+    }
+
+    checkForSpecialTiles(x, y, specialTiles, rotation) {
+        for (let tile of specialTiles) {
+            for (let render of tile.render)
+                if (render.x === x && render.y === y && render.rotation == rotation) {
+                    return render;
+                }
+        }
 
     }
 }

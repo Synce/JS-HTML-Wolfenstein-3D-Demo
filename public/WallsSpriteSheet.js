@@ -7,8 +7,11 @@ export default class WallsSpriteSheet extends SpriteSheet {
         this.height = height;
         super.defineAll(width, height);
         let arr = [];
-        for (let i = 0; i < this.textures.length / 2; i += 2) {
-            arr[i / 2] = [this.textures[i], this.textures[i + 1]]
+        console.log(this.textures)
+        for (let i = 0; i < this.textures.length; i += 2) {
+
+            arr[i / 2 + 1] = [this.textures[i], this.textures[i + 1]]
+
         }
         this.textures = arr;
         console.log(this.textures)

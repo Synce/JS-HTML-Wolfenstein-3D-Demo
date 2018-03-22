@@ -2,6 +2,7 @@ export default class Map {
     constructor() {
         this.map = [[]];
         this.objects = [];
+        this.specialTiles = [];
     }
 
     loadMap(map) {
@@ -20,7 +21,15 @@ export default class Map {
         return this.objects;
     }
 
+    getSpecialTiles() {
+        return this.specialTiles;
+    }
+
     pushNewObject(object) {
         this.objects.push(object)
+    }
+
+    pushNewSpecialTile(tile) {
+        this.specialTiles.push(tile);
     }
 }

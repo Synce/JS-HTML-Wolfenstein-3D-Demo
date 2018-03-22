@@ -6,9 +6,10 @@ import RenderEngine from './RenderEngine.js'
 import {loadImage} from "./Utilities.js";
 import {loadJSON} from "./Utilities.js";
 import ObjectFactory from "./ObjectFactory.js";
+import SpecialTilesFactory from "./SpecialTilesFactory.js";
 
 
-let canvas, ctx, raycaster, player, map, keyborad, renderEngine, factory
+let canvas, ctx, raycaster, player, map, keyborad, renderEngine, factory, factory2
 
 addEventListener('DOMContentLoaded', function () {
     canvas = document.getElementById('canvas')
@@ -19,6 +20,7 @@ addEventListener('DOMContentLoaded', function () {
     raycaster = new Raycaster(60, 1, 900, 500, renderEngine);
     map = new Map();
 
+
     console.log(raycaster.mapWidth)
     player = new Player(3, 4, .1, 4);
     keyborad = new Keyboard(player);
@@ -27,17 +29,20 @@ addEventListener('DOMContentLoaded', function () {
         loadImage('/textures/walls.png'),
         loadImage('/textures/objects.png'),
         loadJSON('/Levels/1-1.JSON'),
-        loadJSON('objectSettings.JSON')
+        loadJSON('settings/objectSettings.JSON'),
+        loadJSON('settings/specialTilesSettings.JSON')
 
     ]).then(
-        function ([walls, objects, level, settings]) {
+        function ([walls, objects, level, settingsOBJ, settingsTiles]) {
             renderEngine.loadTextures(walls, objects)
             map.loadMap(level.map)
             raycaster.setMapSize(map.getMapSize().x, map.getMapSize().y)
-            factory = new ObjectFactory(settings.settingsWalkable)
+            factory = new ObjectFactory(settingsOBJ.settingsWalkable)
+            factory2 = new SpecialTilesFactory(settingsTiles);
+            factory2.setLevel(level.specialTiles)
+            factory2.createTilesAndEvents(map)
             factory.setLevel(level.objects);
             factory.createObjects(map)
-
             render();
         }
     )
@@ -54,7 +59,7 @@ function render() {
     ctx.fillStyle = '#707070'
     ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height)
     player.move(map);
-    raycaster.performRayCast(player.getInfoForRayCast(), map.getMap(), map.getObjects());
+    raycaster.performRayCast(player.getInfoForRayCast(), map.getMap(), map.getObjects(), map.getSpecialTiles());
     renderEngine.render()
     requestAnimationFrame(render)
 }

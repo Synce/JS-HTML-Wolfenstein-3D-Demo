@@ -42,16 +42,16 @@ export default class Player {
 
             let check = true;
 
-            if (map.getMap()[y + checkY][x] > 0 && RectCirCollision(x, y + checkY, this.x, goY, 0.4)) {
+            if ((map.getMap()[y + checkY][x] > 0 || this.checkForOtherCollision(x, y + checkY, map.getObjects(), map.getSpecialTiles())) && RectCirCollision(x, y + checkY, this.x, goY, 0.4)) {
                 this.y = checkY > 0 ? y + 0.6 : y + 0.4
                 check = false;
             }
             else
                 this.y = goY;
 
-            if (map.getMap()[y][x + checkX] > 0 && RectCirCollision(x + checkX, y, goX, this.y, 0.4)) {
+            if ((map.getMap()[y][x + checkX] > 0 || this.checkForOtherCollision(x + checkX, y, map.getObjects(), map.getSpecialTiles())) && RectCirCollision(x + checkX, y, goX, this.y, 0.4)) {
                 this.x = checkX > 0 ? x + 0.6 : x + 0.4
-                check = false;  
+                check = false;
             }
             else
                 this.x = goX;
@@ -59,7 +59,7 @@ export default class Player {
             let angle = this.rotation % Math.PI
 
 
-            if (check && map.getMap()[y + checkY][x + checkX] > 0 && RectCirCollision(x + checkX, y + checkY, goX, goY, 0.4)) {
+            if ((check && map.getMap()[y + checkY][x + checkX] > 0 || this.checkForOtherCollision(x + checkX, y + checkY, map.getObjects(), map.getSpecialTiles())) && RectCirCollision(x + checkX, y + checkY, goX, goY, 0.4)) {
                 if (angle > Math.Pi / 4)
                     this.y = checkY > 0 ? y + 0.6 : y + 0.4
                 else
@@ -75,6 +75,20 @@ export default class Player {
             y: this.y,
             rot: this.rotation,
         }
+    }
+
+    checkForOtherCollision(x, y, objects, tiles) {
+        for (let object of objects) {
+
+            if (object.position.x == x && object.position.y == y && !object.walkable)
+                return true;
+
+        }
+        for (let tile of tiles) {
+            if (tile.x == x && tile.y == y && !tile.walkable)
+                return true;
+        }
+        return false;
     }
 
 
