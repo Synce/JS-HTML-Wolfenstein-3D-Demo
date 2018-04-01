@@ -19,9 +19,9 @@ export default class RenderEngine {
 
     }
 
-    drawStrip(textureID, textureX, x, y, width, height, isDark) {
+    drawStrip(textureID, textureX, x, y, width, height, isDark, translate) {
 
-        this.ctx.drawImage(this.wallsSpriteSheet.getWall(textureID, isDark), textureX, 0, width, 64, x, y, width, height);
+        this.ctx.drawImage(this.wallsSpriteSheet.getWall(textureID, isDark), textureX - translate, 0, width, 64, x, y, width, height);
     }
 
     drawObject(id, x, y, size) {
@@ -51,7 +51,7 @@ export default class RenderEngine {
 
             if (Oi >= this.objects.length || (Si < this.strips.length && this.strips[Si].dist > this.objects[Oi].dist)) {
                 let strip = this.strips[Si];
-                this.drawStrip(strip.textureID, strip.textureX, strip.x, strip.y, strip.stripWidth, strip.height, strip.isDark);
+                this.drawStrip(strip.textureID, strip.textureX, strip.x, strip.y, strip.stripWidth, strip.height, strip.isDark, strip.translate);
 
                 Si++
             }

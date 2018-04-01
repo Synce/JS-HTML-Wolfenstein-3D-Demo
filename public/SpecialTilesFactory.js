@@ -1,8 +1,11 @@
 import SpecialTile from './SpecialTile.js'
+import Event from './Event.js'
+
 
 export default class SpecialTilesFactory {
-    constructor(settings) {
+    constructor(settings, eventHandler) {
         this.settings = settings;
+        this.eventHandler = eventHandler;
     }
 
     setLevel(tilesArray) {
@@ -11,14 +14,15 @@ export default class SpecialTilesFactory {
 
     createTilesAndEvents(map) {
         for (let tile of this.tilesArray) {
-            console.log(tile)
-            map.pushNewSpecialTile(this.createTile(tile))
+            let settings = this.findInSettings(tile.type)
+            let object = this.createTile(tile, settings);
+            map.pushNewSpecialTile(object)
+            this.eventHandler.pushEvent(new Event(settings.event, tile.x, tile.y, object))
         }
     }
 
-    createTile(tile) {
-        let settings = this.findInSettings(tile.type)
-        console.log(settings)
+    createTile(tile, settings) {
+
         let renderArr = []
         for (let i = 0; i < settings.render.length; i++) {
             let x = tile.x;
@@ -55,7 +59,11 @@ export default class SpecialTilesFactory {
                 dark:
                 settings.render[i].dark,
                 additionalDistance:
-                settings.render[i].additionalDistance
+                settings.render[i].additionalDistance,
+                translate: 0,
+                offsetX: settings.render[i].offsetX || 0,
+                offsetY: settings.render[i].offsetY || 0,
+                skip: settings.render[i].skip || false,
             }
             renderArr.push(render)
         }

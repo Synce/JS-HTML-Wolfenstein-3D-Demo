@@ -1,4 +1,4 @@
-import {clampAngle} from "./Utilities.js";
+import {clampAngle, checkIfInAngle} from "./Utilities.js";
 import Raycaster from './Raycaster.js'
 
 export default class PlayerRaycaster extends Raycaster {
@@ -27,6 +27,7 @@ export default class PlayerRaycaster extends Raycaster {
 
 
         let that = this;
+        let additionalStrips = [];
 
         //CHECK OBJECTS TO DRAW
         for (let i = 0; i < objects.length; i++) {
@@ -37,7 +38,7 @@ export default class PlayerRaycaster extends Raycaster {
             let angle = Math.atan2(distY, distX) - player.rot
             let area = that.viewDist / (Math.cos(angle) * dist)
 
-            if (clampAngle(angle) <= that.fov || clampAngle(angle) + that.fov >= Math.PI * 2) {
+            if (checkIfInAngle(angle, that.fov)) {
                 let drawY = (that.screenHeight - area) / 2;
                 let drawX = that.viewDist * Math.tan(angle) + that.screenWidth / 2 - area / 2;
 
@@ -64,10 +65,15 @@ export default class PlayerRaycaster extends Raycaster {
             castSingleRay(player.rot + rayAngle, i);
         }
 
+        for (let additionalStrip of additionalStrips) {
+            castSingleRay(additionalStrip.angle, additionalStrip.id, additionalStrip.skip)
 
-        function castSingleRay(rayAngle, stripIdx) {
+        }
 
 
+        function castSingleRay(rayAngle, stripIdx, skip = []) {
+
+            let translate = 0;
             rayAngle = clampAngle(rayAngle)
 
             // Sprawdzanie w ktorą stronę porusza się promień za pomocą ćwiartek układu współrzędnych
@@ -77,12 +83,21 @@ export default class PlayerRaycaster extends Raycaster {
             //ID uderzonej ściany
             let textureID = 0;
 
-
+            let isTile = false;
             let dist = 0;	// dystans do ściany
             let textureX;	// część tekstury która będzie renderowana
 
 
             let isDark = false;
+
+            function isItToSkip(x, y) {
+                for (let a of skip) {
+                    if (a[0] === x && a[1] === y)
+                        return true
+                }
+                return false;
+
+            }
 
             // Sprawdzanie pionowych zderzeń (vertical)
 
@@ -98,7 +113,9 @@ export default class PlayerRaycaster extends Raycaster {
                 let wallY = Math.floor(y);
                 let tile = that.checkForSpecialTiles(wallX, wallY, specialTiles, 0);
 
-                if (tile) {
+                if (tile && !isItToSkip(wallX, wallY)) {
+                    isTile = tile;
+                    translate = tile.translate;
                     x += dXVer * tile.additionalDistance;
                     y += dYVer * tile.additionalDistance;
 
@@ -144,13 +161,16 @@ export default class PlayerRaycaster extends Raycaster {
 
                 let tile = that.checkForSpecialTiles(wallX, wallY, specialTiles, 1);
 
-                if (tile) {
+                if (tile && !isItToSkip(wallX, wallY)) {
+
                     x += dXVer * tile.additionalDistance;
                     y += dYVer * tile.additionalDistance;
                     let distX = x - player.x;
                     let distY = y - player.y;
                     let blockDist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
                     if ((!dist || blockDist < dist)) {
+                        translate = tile.translate;
+                        isTile = tile;
                         dist = blockDist;
 
                         if (tile.dark)
@@ -168,6 +188,8 @@ export default class PlayerRaycaster extends Raycaster {
                     let distY = y - player.y;
                     let blockDist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
                     if ((!dist || blockDist < dist)) {
+                        translate = 0;
+                        isTile = false;
                         dist = blockDist;
                         textureID = map[wallY][wallX];
                         isDark = true;
@@ -178,7 +200,6 @@ export default class PlayerRaycaster extends Raycaster {
                     }
                     break;
                 }
-           
 
 
                 x += dXHor;
@@ -187,7 +208,10 @@ export default class PlayerRaycaster extends Raycaster {
 
 
             if (dist) {
-
+                if (isTile && isTile.skip) {
+                    skip.push([isTile.x, isTile.y])
+                    additionalStrips.push({id: stripIdx, angle: rayAngle, skip: skip})
+                }
                 let oldDist = dist;
                 //pozbycie sie efektu rybiego oka
                 dist = dist * Math.cos(player.rot - rayAngle);
@@ -209,6 +233,7 @@ export default class PlayerRaycaster extends Raycaster {
                     height: height,
                     isDark: isDark,
                     dist: oldDist,
+                    translate: translate
                 })
 
             }

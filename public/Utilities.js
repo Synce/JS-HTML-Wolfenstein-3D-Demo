@@ -39,7 +39,22 @@ export function loadJSON(url) {
 export function RectCirCollision(RectX, RectY, CircleX, CircleY, CircleRadius, RectWidth = 1, RectHeight = 1) {
     let DeltaX = CircleX - Math.max(RectX, Math.min(CircleX, RectX + RectWidth));
     let DeltaY = CircleY - Math.max(RectY, Math.min(CircleY, RectY + RectHeight));
+
     return (Math.pow(DeltaX, 2) + Math.pow(DeltaY, 2)) < (Math.pow(CircleRadius, 2));
+}
+
+export function RectCirDist(RectX, RectY, CircleX, CircleY, RectWidth = 1, RectHeight = 1) {
+    let DeltaX = CircleX - Math.max(RectX, Math.min(CircleX, RectX + RectWidth));
+    let DeltaY = CircleY - Math.max(RectY, Math.min(CircleY, RectY + RectHeight));
+
+    return {x: DeltaX, y: DeltaY};
+}
+
+export function checkIfInAngle(angle, angle2) {
+
+    if (clampAngle(angle) <= angle2 || clampAngle(angle) + angle2 >= Math.PI * 2)
+        return true;
+    return false;
 }
 
 

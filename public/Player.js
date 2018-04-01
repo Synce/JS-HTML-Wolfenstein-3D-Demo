@@ -1,4 +1,4 @@
-import {clampAngle, RectCirCollision} from "./Utilities.js";
+import {clampAngle, RectCirCollision, RectCirDist} from "./Utilities.js";
 
 export default class Player {
     constructor(x, y, moveSpeed, rotSpeed) {
@@ -9,62 +9,87 @@ export default class Player {
         this.speed = 0;	// poruszanie do przodu (1) do tyłu (-1)
         this.moveSpeed = moveSpeed	// szybkosc poruszania sie na tick
         this.rotSpeed = Math.radians(rotSpeed)	// szybkosc obracania sie na tick;
+        this.go = {
+            x: 0,
+            y: 0
+        }
     }
 
-    move(map) {
-        let move = this.speed * this.moveSpeed;
-
-        this.rotation += this.direction * this.rotSpeed;
+    move(map, time) {
+        let move = this.speed * this.moveSpeed * time;
+        let that = this;
+        this.rotation += this.direction * this.rotSpeed * time;
         this.rotation = clampAngle(this.rotation)
 
         let goX = this.x + Math.cos(this.rotation) * move;
         let goY = this.y + Math.sin(this.rotation) * move;
-
+        this.go = {
+            x: goX,
+            y: goY
+        }
         let x = Math.floor(goX)
         let y = Math.floor(goY)
         if (y > 0 && y < map.getMapSize().y && x > 0 && x < map.getMapSize().x) {
 
-
-            let right = (this.rotation > Math.PI * 2 * 0.75 || this.rotation < Math.PI * 2 * 0.25);
-            let up = (this.rotation < 0 || this.rotation > Math.PI);
-
-            let checkX, checkY
-
-            if ((right && this.speed > 0) || (!right && this.speed < 0))
-                checkX = 1;
-            else
-                checkX = -1;
-            if ((up && this.speed > 0) || (!up && this.speed < 0))
-                checkY = -1;
-            else
-                checkY = 1;
-
-
-            let check = true;
-
-            if ((map.getMap()[y + checkY][x] > 0 || this.checkForOtherCollision(x, y + checkY, map.getObjects(), map.getSpecialTiles())) && RectCirCollision(x, y + checkY, this.x, goY, 0.4)) {
-                this.y = checkY > 0 ? y + 0.6 : y + 0.4
-                check = false;
+            function checkBlock(checkY, checkX, y, x, r = 0.4) {
+                if ((map.getMap()[checkY][checkX] > 0 || that.checkForOtherCollision(checkX, checkY, map.getObjects(), map.getSpecialTiles())) && RectCirCollision(checkX, checkY, x, y, r))
+                    return true;
+                return false;
             }
-            else
-                this.y = goY;
 
-            if ((map.getMap()[y][x + checkX] > 0 || this.checkForOtherCollision(x + checkX, y, map.getObjects(), map.getSpecialTiles())) && RectCirCollision(x + checkX, y, goX, this.y, 0.4)) {
-                this.x = checkX > 0 ? x + 0.6 : x + 0.4
-                check = false;
+            this.y = goY;
+            this.x = goX;
+
+
+            for (let i = -1; i <= 1; i++) {
+                if (checkBlock(y, x + i, goY, goX, .4)) {
+                    this.x = i > 0 ? x + 1 - .4 : x + 0.4
+                    this.minimap.addActiveBlock(x + i, y, 'rgba(33, 23, 181,0.5)')
+
+                } else {
+                    this.minimap.addActiveBlock(x + i, y, 'rgba(23, 181, 47,0.5)')
+                }
+                if (checkBlock(y + i, x, goY, goX, .4)) {
+                    this.y = i > 0 ? y + 1 - .4 : y + .4
+
+                    this.minimap.addActiveBlock(x, y + i, 'rgba(33, 23, 181,0.5)')
+                } else {
+                    this.minimap.addActiveBlock(x, y + i, 'rgba(23, 181, 47,0.5)')
+                }
             }
-            else
-                this.x = goX;
 
-            let angle = this.rotation % Math.PI
+            for (let checkX = -1; checkX <= 1; checkX++)
+                for (let checkY = -1; checkY <= 1; checkY++)
+
+                    if (checkX !== 0 && checkY !== 0) {
+                        let dist = RectCirDist(x + checkX, y + checkY, this.x, this.y)
+                        if (checkBlock(y + checkY, x + checkX, this.y, this.x, .4) && !((map.getMap()[y][x + checkX] > 0 || that.checkForOtherCollision(x + checkX, y, map.getObjects(), map.getSpecialTiles())) || (map.getMap()[y + checkY][x] > 0 || that.checkForOtherCollision(x, y + checkY, map.getObjects(), map.getSpecialTiles())))) {
+                            
+                            if (Math.abs(dist.x) < Math.abs(dist.y)) {
+                                let d = Math.sqrt((0.16 - dist.x * dist.x));
+
+                                d = dist.y < 0 ? -d : d;
+                                d = dist.y < 0 ? Math.abs(dist.y) + d : d - dist.y;
+                                this.y += d
+                            }
+                            else {
+                                let d = Math.sqrt((0.16 - dist.y * dist.y));
+
+                                d = dist.x < 0 ? -d : d;
+                                console.log(d)
+                                console.log(dist.x)
+                                d = dist.x < 0 ? Math.abs(dist.x) + d : d - dist.x;
+                                console.log(d)
+                                this.x += d
+                            }
 
 
-            if ((check && map.getMap()[y + checkY][x + checkX] > 0 || this.checkForOtherCollision(x + checkX, y + checkY, map.getObjects(), map.getSpecialTiles())) && RectCirCollision(x + checkX, y + checkY, goX, goY, 0.4)) {
-                if (angle > Math.Pi / 4)
-                    this.y = checkY > 0 ? y + 0.6 : y + 0.4
-                else
-                    this.x = checkX > 0 ? x + 0.6 : x + 0.4
-            }
+                            this.minimap.addActiveBlock(x + checkX, y + checkY, 'rgba(33, 23, 181,0.5)')
+                        } else {
+                            this.minimap.addActiveBlock(x + checkX, y + checkY, 'rgba(23, 181, 47,0.5)')
+                        }
+                    }
+
         }
     }
 

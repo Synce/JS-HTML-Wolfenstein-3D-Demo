@@ -12,12 +12,16 @@ export default class Keyboard {
         function bindInGameKeyDown(e) {
             if (!that.pressedKeys.includes(e.keyCode))
                 that.pressedKeys.push(e.keyCode)
+            if (e.keyCode === 32)
+                that.player.isSpacebar = true;
         }
 
         document.addEventListener('keyup', bindInGameKeyUp)
 
         function bindInGameKeyUp(e) {
             that.pressedKeys.splice(that.pressedKeys.indexOf(e.keyCode), 1);
+            if (e.keyCode === 32)
+                that.player.isSpacebar = false;
         }
     }
 
@@ -36,6 +40,8 @@ export default class Keyboard {
             this.player.speed = -1;
         else
             this.player.speed = 0;
+
+
     }
 }
 
