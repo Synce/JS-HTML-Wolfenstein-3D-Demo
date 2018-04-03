@@ -10,8 +10,12 @@ import SpecialTilesFactory from "./SpecialTilesFactory.js";
 import EventHandler from "./EventHandler.js";
 import Clock from "./Clock.js";
 import Minimap from './Minimap.js'
+import EnityFactory from "./EntityFactory.js";
+import EntityHandler from "./EntityHandler.js";
+import EntityAnimationsBank from "./EntityAnimationsBank.js";
 
-let canvas, ctx, raycaster, player, map, keyborad, renderEngine, factory, factory2, eventhandler, clock, minmap;
+let canvas, ctx, raycaster, player, map, keyborad, renderEngine, factory, factory2, eventhandler, clock, minmap,
+    factory3, handler, bank;
 
 addEventListener('DOMContentLoaded', function () {
     let mip = document.getElementById('minimap')
@@ -21,12 +25,13 @@ addEventListener('DOMContentLoaded', function () {
     canvas.width = 900;
     clock = new Clock();
     canvas.height = 500;
-    renderEngine = new RenderEngine(canvas)
+    player = new Player(3, 4, 4, 180);
+    handler = new EntityHandler(player);
+    renderEngine = new RenderEngine(canvas, handler)
     raycaster = new Raycaster(60, 1, 900, 500, renderEngine);
     map = new Map();
 
 
-    player = new Player(3, 4, 2, 90);
     keyborad = new Keyboard(player);
     eventhandler = new EventHandler(player, raycaster.fov)
     keyborad.bindKeysInGame();
@@ -35,11 +40,16 @@ addEventListener('DOMContentLoaded', function () {
         loadImage('/textures/objects.png'),
         loadJSON('/Levels/1-1.JSON'),
         loadJSON('settings/objectSettings.JSON'),
-        loadJSON('settings/specialTilesSettings.JSON')
+        loadJSON('settings/specialTilesSettings.JSON'),
+        loadJSON('settings/entities.JSON')
 
     ]).then(
-        function ([walls, objects, level, settingsOBJ, settingsTiles]) {
-            renderEngine.loadTextures(walls, objects)
+        function ([walls, objects, level, settingsOBJ, settingsTiles, settingsEntity]) {
+            bank = new EntityAnimationsBank(settingsEntity)
+            factory3 = new EnityFactory(settingsEntity, handler)
+            factory3.setLevel(level.entities)
+            factory3.createUnits()
+
             map.loadMap(level.map)
             raycaster.setMapSize(map.getMapSize().x, map.getMapSize().y)
             factory = new ObjectFactory(settingsOBJ.settingsWalkable)
@@ -50,7 +60,22 @@ addEventListener('DOMContentLoaded', function () {
             factory.createObjects(map)
             minmap = new Minimap(mip, player, map)
             player.minimap = minmap;
-            render();
+            let promiseArr = [];
+
+            for (name of bank.getTextureNamesToLoad())
+                promiseArr.push(loadImage('/textures/' + name + '.png'))
+
+
+            Promise.all(promiseArr).then(function (textures) {
+                let names = bank.getTextureNamesToLoad()
+                for (let i = 0; i < names.length; i++) {
+                    bank.newAnimation(names[i], textures[i])
+
+                }
+                renderEngine.loadTextures(walls, objects, bank)
+                render();
+            })
+
         }
     )
 
@@ -69,7 +94,7 @@ function render() {
     ctx.fillStyle = '#707070'
     ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height)
     player.move(map, deltaTime);
-    raycaster.performRayCast(player.getInfoForRayCast(), map.getMap(), map.getObjects(), map.getSpecialTiles());
+    raycaster.performRayCast(player.getInfoForRayCast(), map.getMap(), map.getObjects(), map.getSpecialTiles(), handler.getEntites());
     renderEngine.render()
     requestAnimationFrame(render)
 }

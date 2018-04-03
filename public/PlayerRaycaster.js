@@ -23,7 +23,7 @@ export default class PlayerRaycaster extends Raycaster {
     }
 
 
-    performRayCast(player, map, objects, specialTiles) {
+    performRayCast(player, map, objects, specialTiles, entites) {
 
 
         let that = this;
@@ -47,6 +47,29 @@ export default class PlayerRaycaster extends Raycaster {
                     drawX: drawX,
                     drawY: drawY,
                     size: area,
+                    dist: dist,
+                })
+            }
+        }
+        //CHECK ENTITIES TO DRAW
+        for (let i = 0; i < entites.length; i++) {
+
+            let distX = entites[i].x - player.x;
+            let distY = entites[i].y - player.y;
+            let dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+            let angle = Math.atan2(distY, distX) - player.rot
+            let area = that.viewDist / (Math.cos(angle) * dist)
+
+            if (checkIfInAngle(angle, that.fov)) {
+                let drawY = (that.screenHeight - area) / 2;
+                let drawX = that.viewDist * Math.tan(angle) + that.screenWidth / 2 - area / 2;
+
+                that.renderEngine.addEntityToDraw({
+                    id: i,
+                    drawX: drawX,
+                    drawY: drawY,
+                    size: area,
+                    angle: angle,
                     dist: dist,
                 })
             }

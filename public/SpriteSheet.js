@@ -23,5 +23,13 @@ export default class SpriteSheet {
         return this.textures[id];
     }
 
+    define(startX, startY, width, height) {
+        let buffer = document.createElement('canvas');
+        buffer.width = width;
+        buffer.height = height;
+        buffer.getContext('2d').drawImage(this.image, startX, startY, width, height, 0, 0, width, height);
+        this.textures.push(buffer);
+    }
+
 
 }

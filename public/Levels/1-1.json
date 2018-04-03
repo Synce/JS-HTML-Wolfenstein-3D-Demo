@@ -45,5 +45,13 @@
       "rotation": 1,
       "type":     "doors"
     }
+  ],
+  "entities":     [
+    {
+      "y":        4,
+      "x":        4,
+      "rotation": 90,
+      "type":     "guard"
+    }
   ]
 }

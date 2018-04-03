@@ -1,0 +1,127 @@
+{
+  "guard": {
+    "hp":         25,
+    "speed":      2,
+    "stun":       true,
+    "range":      5,
+    "points":     100,
+    "damage":     32,
+    "animations": {
+      "type":   "equal",
+      "stand0": {
+        "fX": 0,
+        "fY": 0,
+        "tX": 0,
+        "tY": 0
+      },
+      "stand1": {
+        "fX": 1,
+        "fY": 0,
+        "tX": 1,
+        "tY": 0
+      },
+      "stand2": {
+        "fX": 2,
+        "fY": 0,
+        "tX": 2,
+        "tY": 0
+      },
+      "stand3": {
+        "fX": 3,
+        "fY": 0,
+        "tX": 3,
+        "tY": 0
+      },
+      "stand4": {
+        "fX": 4,
+        "fY": 0,
+        "tX": 4,
+        "tY": 0
+      },
+      "stand5": {
+        "fX": 5,
+        "fY": 0,
+        "tX": 5,
+        "tY": 0
+      },
+      "stand6": {
+        "fX": 6,
+        "fY": 0,
+        "tX": 6,
+        "tY": 0
+      },
+      "stand7": {
+        "fX": 7,
+        "fY": 0,
+        "tX": 7,
+        "tY": 0
+      },
+      "move0":  {
+        "fX": 0,
+        "fY": 1,
+        "tX": 0,
+        "tY": 4
+      },
+      "move1":  {
+        "fX": 1,
+        "fY": 1,
+        "tX": 1,
+        "tY": 4
+      },
+      "move2":  {
+        "fX": 2,
+        "fY": 1,
+        "tX": 2,
+        "tY": 4
+      },
+      "move3":  {
+        "fX": 3,
+        "fY": 1,
+        "tX": 3,
+        "tY": 4
+      },
+      "move4":  {
+        "fX": 4,
+        "fY": 1,
+        "tX": 4,
+        "tY": 4
+      },
+      "move5":  {
+        "fX": 5,
+        "fY": 1,
+        "tX": 5,
+        "tY": 4
+      },
+      "move6":  {
+        "fX": 6,
+        "fY": 1,
+        "tX": 6,
+        "tY": 4
+      },
+      "move7":  {
+        "fX": 7,
+        "fY": 1,
+        "tX": 7,
+        "tY": 4
+      },
+      "stun":   {
+        "fX": 7,
+        "fY": 5,
+        "tX": 7,
+        "tY": 5
+      },
+      "death":  {
+        "fX": 7,
+        "fY": 5,
+        "tX": 7,
+        "tY": 5
+      },
+      "attack": {
+        "fX": 0,
+        "fY": 6,
+        "tX": 2,
+        "tY": 6
+      }
+    }
+  }
+}
