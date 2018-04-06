@@ -7,7 +7,11 @@ Math.radians = function (degrees) {
 Math.degrees = function (radians) {
     return radians * 180 / Math.PI;
 };
-
+Number.prototype.rounded = function (i) {
+    i = Math.pow(10, i || 15);
+    // default
+    return Math.round(this * i) / i;
+}
 
 export function clampAngle(angle) {   //funckja zwracajaca podany kat w przedziałe 0-2PI
     if (angle > 2 * Math.PI)

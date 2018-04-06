@@ -49,8 +49,8 @@
   "entities":     [
     {
       "y":        4,
-      "x":        4,
-      "rotation": 90,
+      "x":        6,
+      "rotation": 180,
       "type":     "guard"
     }
   ]

@@ -1,37 +1,45 @@
 import PathNode from "./PathNode.js";
 import Heap from "./Heap.js";
+import RayCaster from "./Raycaster.js"
+import {RectCirCollision, RectCirDist} from "./Utilities.js";
 
 export default class PathFinder {
-    constructor() {
+    constructor(map) {
+        this.map = map;
+        this.grid = [];
 
     }
 
-    findWay(meta, justCheck = false) {
+    findWay(s, meta) {
+        let that = this;
+
         let final = [];
         let open = new Heap(function (x) {
             return x.getFCost();
 
         })
         let closed = [];
-        let start = GameManager.pathFinding.grid[this.position.x][this.position.y]
-        let target = GameManager.pathFinding.grid[meta[0]][meta[1]];
+        let start = this.grid[Math.floor(s.y)][Math.floor(s.x)];
+        let target = this.grid[Math.floor(meta.y)][Math.floor(meta.x)];
         open.push(start);
 
 
-        while (open.size() > 0) {
+        while (open.length() > 0) {
             let currentNode = open.content[0];
             open.remove(currentNode)
             closed.push(currentNode)
 
             if (currentNode === target) {
-                if (justCheck)
-                    return true
+
                 translatePath(start, target)
-                smoothingPath();
+
+                final = smoothPath(final, s)
+
                 return final
             }
-            for (let node of GameManager.pathFinding.getNeighbours(currentNode)) {
-                if (node.walkable && !closed.includes(node) || node == target) {
+
+            for (let node of this.getNeighbours(currentNode)) {
+                if (node.walkable && !closed.includes(node) || node === target) {
 
                     let newMovementCost = currentNode.gCost + getDistance(currentNode, node);
                     if (newMovementCost < node.gCost || !open.includes(node)) {
@@ -42,7 +50,7 @@ export default class PathFinder {
                         if (!open.includes(node))
                             open.push(node)
                         else {
-                            open.bubbleUp(open.content.indexOf(node));
+                            open.goUp(open.content.indexOf(node));
                         }
 
 
@@ -53,68 +61,43 @@ export default class PathFinder {
         return false;
 
 
-        function smoothingPath() {
-            let segments = [];
-            let segment = {
-                start: null,
-                meta: null,
-            }
-            let newSeg = true;
-            let direction = null;
-            for (let i = 0; i < final.length - 1; i++) {
-                console.log(direction)
-                if (newSeg) {
-                    segment.start = final[i];
-                    if (final[i].x === final[i + 1].x)
-                        direction = 'x';
-                    else if (final[i].y === final[i + 1].y)
-                        direction = 'y';
-                    else
-                        direction = 'xy'
-                    newSeg = false;
-
-                }
-                if (direction === 'x') {
-                    if (final[i].x !== final[i + 1].x || i === final.length - 2) {
-                        newSeg = true;
-                        segment.meta = final[i]
-                        segments.push(segment)
-                    }
-                }
-                else if (direction === 'y') {
-                    if (final[i].y !== final[i + 1].y || i === final.length - 2) {
-                        newSeg = true;
-                        segment.meta = final[i]
-                        segments.push(segment)
-                    }
-                }
-                else {
-                    console.log(final[i].y)
-                    console.log(final[i + 1].y)
-                    console.log(final[i].x)
-                    console.log(final[i + 1].x)
-
-                    if (final[i].y == final[i + 1].y || final[i].x == final[i + 1].x || i === final.length - 2) {
-                        newSeg = true;
-                        segment.meta = final[i]
-                        segments.push(segment)
-                    }
-                }
-
-            }
-            final = [];
-            for (let i = 0; i < segments.length; i++) {
-                final.push(segments[i].start)
-                final.push(segments[i].meta)
-            }
-        }
-
         function getDistance(nodeA, nodeB) {
             let dstX = Math.abs(nodeA.x - nodeB.x)
             let dstY = Math.abs(nodeA.y - nodeB.y)
             if (dstX > dstY)
-                return 28 * dstY + 20 * (dstX - dstY)
-            return 28 * dstX + 20 * (dstY - dstX)
+                return 1.4 * dstY + (dstX - dstY)
+            return 1.4 * dstX + (dstY - dstX)
+        }
+
+        function smoothPath(path, s) {
+
+
+            let start = s
+            let final = [];
+            let lastSeen = s;
+            if (path.length > 1) {
+                for (let node of path) {
+                    console.log(RayCaster.castRay(start, {x: node.x + .5, y: node.y + .5}, that.map))
+                    if (RayCaster.castRay(start, {x: node.x + .5, y: node.y + .5}, that.map)) {
+                        final.push({x: lastSeen.x + .5, y: lastSeen.y + .5})
+                        start = {x: lastSeen.x + .5, y: lastSeen.y + .5}
+                        lastSeen = node;
+
+
+                    }
+                    else {
+                        lastSeen = node;
+
+                    }
+                }
+                final.push({x: lastSeen.x + .5, y: lastSeen.y + .5})
+
+            }
+            else {
+                final.push({x: lastSeen.x, y: lastSeen.y})
+            }
+            console.log(final)
+            return final;
         }
 
         function translatePath(start, end) {
@@ -123,18 +106,18 @@ export default class PathFinder {
                 final.unshift(currentNode);
                 currentNode = currentNode.parent;
             }
-            final.unshift(start);
+
         }
 
     }
 
     createPathLayer() {
-        this.grid = [];
-        for (let i = 0; i < 100; i++) {
-            this.grid[i] = [];
-            for (let j = 0; j < 100; j++) {
 
-                this.grid[i][j] = new PathNode(GameManager.World.map[i][j].walkable, i, j,);
+        for (let y = 0; y < this.map.getMapSize().y; y++) {
+            this.grid[y] = [];
+            for (let x = 0; x < this.map.getMapSize().x; x++) {
+
+                this.grid[y][x] = new PathNode(!this.map.checkForCollisions(y, x), x, y);
 
             }
         }
@@ -148,13 +131,85 @@ export default class PathFinder {
                 if (x != 0 || y != 0) {
                     let checkX = node.x + x;
                     let checkY = node.y + y;
-                    if (checkX >= 0 && checkX < 100 && checkY >= 0 && checkY < 100)
-                        tab.push(this.grid[checkX][checkY])
+                    if (checkX >= 0 && this.map.getMapSize().x && checkY >= 0 && this.map.getMapSize().y)
+                        tab.push(this.grid[checkY][checkX])
                 }
             }
         }
 
         return tab
     }
+
+    static checkCollisions(goX, goY, r, map, minimap) {
+        let toX = -1;
+        let toY = -1;
+        let x = Math.floor(goX)
+        let y = Math.floor(goY)
+        if (y > 0 && y < map.getMapSize().y && x > 0 && x < map.getMapSize().x) {
+
+            function checkBlock(checkY, checkX, y, x, r = 0.4) {
+                if (map.checkForCollisions(checkY, checkX) && RectCirCollision(checkX, checkY, x, y, r))
+                    return true;
+                return false;
+            }
+
+            toY = goY;
+            toX = goX;
+
+
+            for (let i = -1; i <= 1; i++) {
+                if (checkBlock(y, x + i, goY, goX, r)) {
+                    toX = i > 0 ? x + 1 - r : x + r
+                    if (minimap)
+                        minimap.addActiveBlock(x + i, y, 'rgba(33, 23, 181,0.5)')
+
+                } else {
+                    if (minimap)
+                        minimap.addActiveBlock(x + i, y, 'rgba(23, 181, 47,0.5)')
+                }
+                if (checkBlock(y + i, x, goY, goX, r)) {
+                    toY = i > 0 ? y + 1 - r : y + r
+                    if (minimap)
+                        minimap.addActiveBlock(x, y + i, 'rgba(33, 23, 181,0.5)')
+                }
+                else {
+                    if (minimap)
+                        minimap.addActiveBlock(x, y + i, 'rgba(23, 181, 47,0.5)')
+                }
+            }
+
+            for (let checkX = -1; checkX <= 1; checkX++)
+                for (let checkY = -1; checkY <= 1; checkY++)
+
+                    if (checkX !== 0 && checkY !== 0) {
+                        let dist = RectCirDist(x + checkX, y + checkY, toX, toY)
+                        if (checkBlock(y + checkY, x + checkX, toY, toX, r) && (!map.checkForCollisions(y, x + checkX) || map.checkForCollisions(y + checkY, x))) {
+
+                            if (Math.abs(dist.x) < Math.abs(dist.y)) {
+                                let d = Math.sqrt(((r * r) - (dist.x * dist.x)));
+                                d = dist.y < 0 ? -d : d;
+                                d = dist.y < 0 ? Math.abs(dist.y) + d : d - dist.y;
+                                toY += d
+                            }
+                            else {
+                                let d = Math.sqrt(((r * r) - (dist.y * dist.y)));
+                                d = dist.x < 0 ? -d : d;
+                                d = dist.x < 0 ? Math.abs(dist.x) + d : d - dist.x;
+                                toX += d
+                            }
+
+                            if (minimap)
+                                minimap.addActiveBlock(x + checkX, y + checkY, 'rgba(33, 23, 181,0.5)')
+                        }
+                        else {
+                            if (minimap)
+                                minimap.addActiveBlock(x + checkX, y + checkY, 'rgba(23, 181, 47,0.5)')
+                        }
+                    }
+
+        }
+        return {x: toX, y: toY}
+    }
+
 
 }

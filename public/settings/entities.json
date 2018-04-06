@@ -1,7 +1,7 @@
 {
   "guard": {
     "hp":         25,
-    "speed":      2,
+    "speed":      1,
     "stun":       true,
     "range":      5,
     "points":     100,

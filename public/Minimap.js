@@ -7,6 +7,7 @@ export default class Minimap {
         canvas.width = this.map.getMapSize().x * 20;
         canvas.height = this.map.getMapSize().y * 20;
         this.activeBlocks = [];
+        this.lines = [];
     }
 
     update() {
@@ -55,7 +56,7 @@ export default class Minimap {
 
         this.ctx.beginPath();
         this.ctx.fillStyle = "rgba(200,0,0,0.5)";
-        this.ctx.arc(this.player.go.x * 20, this.player.go.y * 20, 8, 0, 2 * Math.PI, false);
+        this.ctx.arc(this.player.x * 20, this.player.y * 20, 8, 0, 2 * Math.PI, false);
         this.ctx.fill();
         this.ctx.beginPath();
         this.ctx.fillStyle = "rgb(0,0,250)";
@@ -63,14 +64,34 @@ export default class Minimap {
         this.ctx.fill();
         this.ctx.beginPath();
         this.ctx.fillStyle = "rgb(0,0,250)";
-        this.ctx.arc(this.player.go.x * 20, this.player.go.y * 20, 2, 0, 2 * Math.PI, false);
+        this.ctx.arc(this.player.x * 20, this.player.y * 20, 2, 0, 2 * Math.PI, false);
         this.ctx.fill();
 
         this.activeBlocks = [];
+        for (let line of this.lines) {
+            this.ctx.beginPath();
+            this.ctx.strokeStyle = "blue";
+            this.ctx.lineWidth = 2;
+            this.ctx.moveTo(line.sX * 20, line.sY * 20);
+            this.ctx.lineTo(line.tX * 20, line.tY * 20);
+            this.ctx.fillStyle = "rgb(250,0,0)";
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.arc(line.tX * 20, line.tY * 20, 2, 0, 2 * Math.PI, false);
+
+            this.ctx.fill();
+
+        }
+        this.lines = []
 
     }
 
     addActiveBlock(x, y, color) {
         this.activeBlocks.push({x: x, y: y, color: color})
+    }
+
+    drawLine(sX, sY, tX, tY) {
+        this.lines.push({sX: sX, sY: sY, tX: tX, tY: tY})
+
     }
 }

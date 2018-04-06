@@ -25,11 +25,11 @@ addEventListener('DOMContentLoaded', function () {
     canvas.width = 900;
     clock = new Clock();
     canvas.height = 500;
+    map = new Map();
     player = new Player(3, 4, 4, 180);
-    handler = new EntityHandler(player);
+    handler = new EntityHandler(player, map);
     renderEngine = new RenderEngine(canvas, handler)
     raycaster = new Raycaster(60, 1, 900, 500, renderEngine);
-    map = new Map();
 
 
     keyborad = new Keyboard(player);
@@ -60,6 +60,8 @@ addEventListener('DOMContentLoaded', function () {
             factory.createObjects(map)
             minmap = new Minimap(mip, player, map)
             player.minimap = minmap;
+            handler.initPathFinder()
+            handler.minimap = minmap;
             let promiseArr = [];
 
             for (name of bank.getTextureNamesToLoad())
@@ -94,6 +96,7 @@ function render() {
     ctx.fillStyle = '#707070'
     ctx.fillRect(0, canvas.height / 2, canvas.width, canvas.height)
     player.move(map, deltaTime);
+    handler.update(deltaTime)
     raycaster.performRayCast(player.getInfoForRayCast(), map.getMap(), map.getObjects(), map.getSpecialTiles(), handler.getEntites());
     renderEngine.render()
     requestAnimationFrame(render)

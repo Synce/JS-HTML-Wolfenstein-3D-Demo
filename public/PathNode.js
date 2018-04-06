@@ -10,7 +10,7 @@ export default class PathNode {
 
     }
 
-    getFCost = function () {
+    getFCost() {
         return this.gCost + this.hCost;
     }
 }

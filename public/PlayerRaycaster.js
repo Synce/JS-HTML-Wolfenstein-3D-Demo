@@ -236,6 +236,7 @@ export default class PlayerRaycaster extends Raycaster {
                     additionalStrips.push({id: stripIdx, angle: rayAngle, skip: skip})
                 }
                 let oldDist = dist;
+
                 //pozbycie sie efektu rybiego oka
                 dist = dist * Math.cos(player.rot - rayAngle);
 

@@ -1,15 +1,21 @@
 import WallsSpriteSheet from "./WallsSpriteSheet.js";
 import SpriteSheet from "./SpriteSheet.js";
+import Heap from "./Heap.js";
 
 export default class RenderEngine {
     constructor(canvas, handler) {
         this.canvas = canvas;
         this.entityHandler = handler;
         this.ctx = canvas.getContext('2d')
-        this.strips = [];
-        this.objects = [];
-        this.entities = [];
-
+        this.strips = new Heap(function (x) {
+            return -x.dist;
+        });
+        this.objects = new Heap(function (x) {
+            return -x.dist;
+        });
+        this.entities = new Heap(function (x) {
+            return -x.dist;
+        });
 
     }
 
@@ -49,46 +55,50 @@ export default class RenderEngine {
     }
 
     render() {
-        function compareDist(a, b) {
-            return b.dist - a.dist
-        }
+        /*
+           function compareDist(a, b) {
+               return b.dist - a.dist
+           }
 
-        this.strips.sort(compareDist)
-        this.objects.sort(compareDist)
-        this.entities.sort(compareDist)
-        let Si = 0;
-        let Oi = 0;
-        let Ei = 0;
+           this.strips.sort(compareDist)
+           this.objects.sort(compareDist)
+           this.entities.sort(compareDist)
+           let Si = 0;
+           let Oi = 0;
+           let Ei = 0;
+   */
 
 
-        while (Oi < this.objects.length || Si < this.strips.length || Ei < this.entities.length) {
+        while (this.objects.length() > 0 || this.strips.length() > 0 || this.entities.length() > 0) {
 
-            if (Oi < this.objects.length && (Si >= this.strips.length || this.objects[Oi].dist > this.strips[Si].dist) && (Ei >= this.entities.length || this.objects[Oi].dist > this.entities[Ei].dist)) {
+            if (this.objects.length() > 0 && (this.strips.length() == 0 || this.objects.getScore() < this.strips.getScore()) && (this.entities.length() == 0 || this.objects.getScore() < this.entities.getScore())) {
 
-                let obj = this.objects[Oi];
+                let obj = this.objects.pop();
+
                 this.drawObject(obj.id, obj.drawX, obj.drawY, obj.size);
-                Oi++
+
             }
-            else if (Ei < this.entities.length && (Si >= this.strips.length || this.entities[Ei].dist > this.strips[Si].dist)) {
-                let ent = this.entities[Ei]
+            else if (this.entities.length() > 0 && (this.strips.length() == 0 || this.entities.getScore() < this.strips.getScore())) {
+                let ent = this.entities.pop();
+
                 this.drawEntity(ent.id, ent.drawX, ent.drawY, ent.size, ent.angle)
-                Ei++;
 
 
             }
             else {
-                let strip = this.strips[Si];
+                let strip = this.strips.pop();
+
                 this.drawStrip(strip.textureID, strip.textureX, strip.x, strip.y, strip.stripWidth, strip.height, strip.isDark, strip.translate);
 
-                Si++
 
             }
+
         }
 
 
-        this.strips = [];
-        this.objects = [];
-        this.entities = [];
+        this.strips.content = [];
+        this.objects.content = [];
+        this.entities.content = [];
     }
 
 }

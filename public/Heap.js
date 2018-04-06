@@ -44,8 +44,8 @@ export default class Heap {
 
         while (n > 0) {
 
-            let parentN = Math.floor((n + 1) / 2) - 1,
-                parent = this.content[parentN];
+            let parentN = Math.floor((n + 1) / 2) - 1;
+            let parent = this.content[parentN];
             if (score >= this.scoreFunction(parent))
                 break;
 
@@ -64,11 +64,12 @@ export default class Heap {
             let child2Number = (n + 1) * 2
             let child1Number = child2Number - 1;
 
+
             let bufor = null;
             if (child1Number < length) {
 
-                let child1 = this.content[child1Number],
-                    child1Score = this.scoreFunction(child1);
+                let child1 = this.content[child1Number];
+                let child1Score = this.scoreFunction(child1);
 
                 if (child1Score < elemScore)
                     bufor = child1Number;
@@ -77,7 +78,7 @@ export default class Heap {
             if (child2Number < length) {
                 let child2 = this.content[child2Number],
                     child2Score = this.scoreFunction(child2);
-                if (child2Score < (bufor == null ? elemScore : child1Score))
+                if (child2Score < (bufor == null ? elemScore : this.scoreFunction(this.content[bufor])))
                     bufor = child2Number;
             }
 
@@ -91,5 +92,9 @@ export default class Heap {
 
     includes(node) {
         return this.content.includes(node)
+    }
+
+    getScore() {
+        return this.scoreFunction(this.content[0]);
     }
 };

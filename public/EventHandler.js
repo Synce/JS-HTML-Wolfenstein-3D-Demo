@@ -1,5 +1,6 @@
 import {checkIfInAngle} from './Utilities.js'
 
+
 export default class EventHandler {
     constructor(player, fov) {
         this.player = player;
