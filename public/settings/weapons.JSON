@@ -1,0 +1,23 @@
+{
+  "knife":   {
+    "hitscan": false,
+    "img":     1,
+    "frame":   0.06,
+    "single":  true,
+    "start":   true
+  },
+  "pistol":  {
+    "hitscan": true,
+    "img":     2,
+    "frame":   0.15,
+    "single":  true,
+    "start":   true
+  },
+  "machine": {
+    "hitscan": true,
+    "img":     3,
+    "frame":   0.03,
+    "single":  false,
+    "start":   true
+  }
+}

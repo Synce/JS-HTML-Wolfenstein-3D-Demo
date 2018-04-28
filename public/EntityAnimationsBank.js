@@ -11,7 +11,7 @@ export default class EntityAnimationsBank {
     }
 
     newAnimation(type, img) {
-        this.bank[type] = new Animation(img, this.config[type].animations, 64.8, 64.8)
+        this.bank[type] = new Animation(img, this.config[type].animations, 64.9, 64.9)
     }
 
     getFrame(type, animation, frame) {

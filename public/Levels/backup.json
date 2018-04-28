@@ -737,6 +737,150 @@
   ],
   "entities":     [
     {
+      "y":        7.5,
+      "x":        32,
+      "rotation": 180,
+      "type":     "guard",
+      "patrol":   {
+        "x": 37,
+        "y": 7
+      }
+    },
+    {
+      "y":        5.5,
+      "x":        42,
+      "rotation": 180,
+      "type":     "guard"
+    },
+    {
+      "y":        4.5,
+      "x":        36,
+      "rotation": 270,
+      "type":     "guard"
+    },
+    {
+      "y":        16.5,
+      "x":        32.5,
+      "rotation": 0,
+      "type":     "guard"
+    }, {
+      "y":        20,
+      "x":        34.5,
+      "rotation": 180,
+      "type":     "guard",
+      "patrol":   {
+        "x": 34.5,
+        "y": 11
+      }
+    },
+    {
+      "y":        30.5,
+      "x":        28.8,
+      "rotation": 180,
+      "type":     "guard",
+      "patrol":   {
+        "x": 40.5,
+        "y": 26.5
+      }
+    },
+    {
+      "y":        27.5,
+      "x":        28.5,
+      "rotation": 0,
+      "type":     "guard"
+    },
+    {
+      "y":        11.5,
+      "x":        19.5,
+      "rotation": 180,
+      "type":     "guard",
+      "patrol":   {
+        "x": 19.5,
+        "y": 5.5
+      }
+    }, {
+      "y":        11.5,
+      "x":        21.5,
+      "rotation": 180,
+      "type":     "guard"
+    }, {
+      "y":        14.6,
+      "x":        14.6,
+      "rotation": 150,
+      "type":     "guard"
+    }, {
+      "y":        12.6,
+      "x":        10.6,
+      "rotation": 0,
+      "type":     "guard"
+    }, {
+      "y":        10,
+      "x":        10,
+      "rotation": 40,
+      "type":     "guard"
+    },
+    {
+      "y":        20,
+      "x":        10.5,
+      "rotation": 180,
+      "type":     "guard",
+      "patrol":   {
+        "x": 10.5,
+        "y": 17
+      }
+    },
+    {
+      "y":        30,
+      "x":        12,
+      "rotation": 90,
+      "type":     "guard"
+    },
+    {
+      "y":        27.5,
+      "x":        7,
+      "rotation": 180,
+      "type":     "guard",
+      "patrol":   {
+        "x": 13,
+        "y": 27.5
+      }
+    }, {
+      "y":        38.5,
+      "x":        10.5,
+      "rotation": 270,
+      "type":     "guard"
+    },
+    {
+      "y":        41.5,
+      "x":        2.5,
+      "rotation": 180,
+      "type":     "guard",
+      "patrol":   {
+        "x": 2.5,
+        "y": 20.5
+      }
+    },
+    {
+      "y":        41.5,
+      "x":        35.5,
+      "rotation": 180,
+      "type":     "guard",
+      "patrol":   {
+        "x": 35.5,
+        "y": 35.5
+      }
+    }, {
+      "y":        29.5,
+      "x":        47.5,
+      "rotation": 270,
+      "type":     "guard"
+    }, {
+      "y":        39.5,
+      "x":        48.5,
+      "rotation": -270,
+      "type":     "guard"
+    },
+    {
       "y":        55.5,
       "x":        31.5,
       "rotation": 0,

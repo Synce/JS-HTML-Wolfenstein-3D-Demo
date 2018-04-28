@@ -22,11 +22,11 @@ export default class Heap {
     }
 
     remove(node) {
-
-        for (let i = 0; i < this.content.length; i++) {
+        let lenght = this.content.length;
+        for (let i = 0; i < lenght; i++) {
             if (this.content[i] !== node) continue;
             let end = this.content.pop();
-            if (i === this.content.length - 1) break;
+            if (i === this.content.length) break;
             this.content[i] = end;
             this.goUp(i);
             this.goDown(i);

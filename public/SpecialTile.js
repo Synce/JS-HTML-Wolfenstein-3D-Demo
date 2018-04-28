@@ -1,12 +1,20 @@
 import TimeHelper from "./TimeHelper.js";
 
 export default class SpecialTile {
-    constructor(x, y, render, type) {
+    constructor(x, y, render, type, move = {}, wallID = 2) {
         this.x = x;
         this.y = y;
         this.render = render;
         this.type = type;
         this.state = 0;
+        this.wallID = wallID;
+        this.moveTo = move;
+        this.offsetX = 0;
+        this.offsetY = 0;
+        if (type == "secret") {
+            this.offsetX = 0.5;
+            this.offsetY = 0;
+        }
         this.timeHelper = new TimeHelper(1, 64)
         this.walkable = false;
         this.needsFix = false;
@@ -52,11 +60,16 @@ export default class SpecialTile {
                 this.walkable = false;
             }
         }
+
         let distance = Math.sqrt(Math.pow(this.y + 0.5 - y, 2) + Math.pow(this.x + 0.5 - x, 2))
         if (this.wait && this.wait.update(time) === 1 && distance >= .7) {
             this.wait = null;
             this.state = 2;
         }
+    }
+
+    moveWall() {
+
     }
 
 }

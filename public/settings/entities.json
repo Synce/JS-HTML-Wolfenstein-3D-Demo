@@ -1,9 +1,9 @@
 {
   "guard": {
-    "hp":         25,
+    "hp":         50,
     "speed":      1,
     "stun":       true,
-    "range":      5,
+    "range":      4,
     "points":     100,
     "damage":     32,
     "animations": {
@@ -111,9 +111,9 @@
         "tY": 5
       },
       "death":  {
-        "fX": 7,
+        "fX": 0,
         "fY": 5,
-        "tX": 7,
+        "tX": 4,
         "tY": 5
       },
       "attack": {

@@ -64,9 +64,12 @@ export default class SpecialTilesFactory {
                 offsetX: settings.render[i].offsetX || 0,
                 offsetY: settings.render[i].offsetY || 0,
                 skip: settings.render[i].skip || false,
+                update: settings.render[i].update || false
             }
             renderArr.push(render)
         }
+        if (tile.move)
+            return new SpecialTile(tile.x, tile.y, renderArr, tile.type, tile.move)
         return new SpecialTile(tile.x, tile.y, renderArr, tile.type)
 
     }

@@ -134,23 +134,36 @@ export default class PlayerRaycaster extends Raycaster {
             while (x >= 1 && x < that.mapWidth && y >= 0 && y < that.mapHeight) {  //dopoki x i y mieszczą sie w granicach mapy
                 let wallX = Math.floor(x + (right ? 0 : -1)); //-1 bo zebiramy hit z prawej strony a jak tego nie ma
                 let wallY = Math.floor(y);
-                let tile = that.checkForSpecialTiles(wallX, wallY, specialTiles, 0);
+                let tile = that.checkForSpecialTiles(x + (right ? 0 : -1), y, specialTiles, 0, dXVer, dXVer, x + dXVer + (right ? 0 : -1), y);
 
                 if (tile && !isItToSkip(wallX, wallY)) {
                     isTile = tile;
                     translate = tile.translate;
-                    x += dXVer * tile.additionalDistance;
-                    y += dYVer * tile.additionalDistance;
+
+                    let addDist = tile.additionalDistance;
+
+
+                    x += dXVer * addDist;
+                    y += dYVer * addDist;
+
+
+                    let dy = y;
+
 
                     let distX = x - player.x;
                     let distY = y - player.y;
                     dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
 
                     textureID = tile.wallID;
-                    textureX = y % 1;
+                    if (tile.textureX)
+                        textureX = tile.textureX
+                    else
+                        textureX = dy % 1;
                     if (!right) textureX = 1 - textureX;
 
+
                     break;
+
                 }
                 else if (map[wallY][wallX] > 0) { //sprawdzanie czy punkt jest ścianą
                     let distX = x - player.x;
@@ -182,12 +195,17 @@ export default class PlayerRaycaster extends Raycaster {
                 let wallY = Math.floor(y + (up ? -1 : 0));
                 let wallX = Math.floor(x);
 
-                let tile = that.checkForSpecialTiles(wallX, wallY, specialTiles, 1);
+                let tile = that.checkForSpecialTiles(x, y + (up ? -1 : 0), specialTiles, 1, dXHor, dYHor, x, y + dXHor + (up ? -1 : 0));
 
                 if (tile && !isItToSkip(wallX, wallY)) {
+                    let addDist = tile.additionalDistance;
 
-                    x += dXVer * tile.additionalDistance;
-                    y += dYVer * tile.additionalDistance;
+
+                    x += dXHor * addDist;
+                    y += dYHor * addDist;
+                    let dx = x;
+
+
                     let distX = x - player.x;
                     let distY = y - player.y;
                     let blockDist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
@@ -199,8 +217,10 @@ export default class PlayerRaycaster extends Raycaster {
                         if (tile.dark)
                             isDark = true;
                         textureID = tile.wallID;
-
-                        textureX = x % 1;
+                        if (tile.textureX)
+                            textureX = tile.textureX
+                        else
+                            textureX = dx % 1;
                         if (up) textureX = 1 - textureX;
 
                     }
@@ -267,13 +287,62 @@ export default class PlayerRaycaster extends Raycaster {
 
     }
 
-    checkForSpecialTiles(x, y, specialTiles, rotation) {
+    checkForSpecialTiles(x, y, specialTiles, rotation, hx, hy, dx, dy) {
+        let fx = Math.floor(x)
+        let fy = Math.floor(y)
         for (let tile of specialTiles) {
             for (let render of tile.render)
-                if (render.x === x && render.y === y && render.rotation == rotation) {
-                    return render;
+                if (render.update) {
+                    if ((render.x + Math.floor(tile.offsetX) === fx || (tile.offsetX && render.x + Math.floor(tile.offsetX) === fx - 1)) && (render.y + Math.floor(tile.offsetY) === fy || (tile.offsetY && render.y + Math.floor(tile.offsetY) === fy - 1)) && render.rotation == rotation) {
+
+                        render.wallID = tile.wallID;
+                        if (!rotation) {
+
+                            render.offset = tile.offsetX % 1
+                            let gx = x + render.offset * hx
+                            let gy = y + render.offset * hy
+                            if (Math.floor(gx) === Math.floor(render.x + tile.offsetX) && Math.floor(gy) === render.y) {
+                                //  render.textureX = gy % 1
+
+                            }
+                            if (tile.offsetY && render.y + Math.floor(tile.offsetY) === fy - 1)
+                                render.textureX = y % 1 + tile.offsetY % 1
+                            else if (tile.offsetY)
+                                render.textureX = y % 1 + tile.offsetY % 1
+
+                        }
+                        else {
+                            render.offset = tile.offsetY % 1
+                            let gx = x + render.offset * hx
+                            let gy = y + render.offset * hy
+                            if (Math.floor(gy) === Math.floor(render.y + tile.offsetY) && Math.floor(gx) === render.x) {
+                                //   render.textureX = gx % 1
+
+                            }
+                            if (tile.offsetX && render.x + Math.floor(tile.offsetX) === fx - 1)
+                                render.textureX = x % 1 + tile.offsetX % 1
+                            else if (tile.offsetX)
+                                render.textureX = x % 1 - tile.offsetX % 1
+
+
+                            if (render.textureX > 0 && render.textureX < 1) {
+
+                                //  render.additionalDistance = render.offset
+                                return render;
+                            }
+                        }
+
+                    }
                 }
+                else {
+                    if (render.x === fx && render.y === fy && render.rotation == rotation) {
+
+                        return render;
+                    }
+                }
+
         }
+
 
     }
 }

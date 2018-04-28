@@ -41,7 +41,18 @@ export default class Keyboard {
         else
             this.player.speed = 0;
 
-
+        if (this.pressedKeys.includes(88)) {
+            this.player.shooting = true;
+        }
+        else
+            this.player.shooting = false;
+        if (this.pressedKeys.includes(49)) {
+            this.player.changeWeapon(1);
+        } else if (this.pressedKeys.includes(50)) {
+            this.player.changeWeapon(2);
+        } else if (this.pressedKeys.includes(51)) {
+            this.player.changeWeapon(3);
+        }
     }
 }
 

@@ -1,26 +1,22 @@
 export default class Object {
-    constructor(x, y, id, walkable) {
+    constructor(x, y, id, walkable, player, cb) {
         this.position = {
             x: x,
             y: y,
         }
         this.id = id;
         this.walkable = walkable;
-        this.drawed = false;
-        this.onStandCallback = function () {
+        this.player = player;
+        this.cb = cb;
+    }
+
+
+    onStand(map) {
+        console.log(this)
+        if (this.cb.name) {
+            this.player[this.cb.name](this.cb.val);
+            map.removeObject(this)
         }
-    }
-
-    setOnStandCallback(cb) {
-        this.onStandCallback = cb;
-    }
-
-    onStand() {
-        this.onStandCallback();
-    }
-
-    setDrawed(state) {
-        this.drawed = state;
     }
 
 

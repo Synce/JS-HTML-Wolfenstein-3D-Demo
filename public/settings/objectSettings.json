@@ -3,5 +3,33 @@
     true, true, true, false, false, false, true, false, true, false, false, true, false, false, false, false, true,
     true, false, false, false, true, true, true, false, true, true, true, true, true, true, true, true, true, true,
     true, true, false, false, false, true, false, true, true, true, true, false, false, true
-  ]
+  ],
+  "id28":             {
+    "name": "giveAmmo",
+    "val":  4
+  },
+  "id31":             {
+    "name": "giveScore",
+    "val":  100
+  },
+  "id32":             {
+    "name": "giveScore",
+    "val":  500
+  },
+  "id33":             {
+    "name": "giveScore",
+    "val":  1000
+  },
+  "id27":             {
+    "name": "giveHp",
+    "val":  50
+  },
+  "id26":             {
+    "name": "giveHp",
+    "val":  25
+  },
+  "id8":              {
+    "name": "giveHp",
+    "val":  10
+  }
 }

@@ -29,17 +29,17 @@ export default class PathFinder {
             open.remove(currentNode)
             closed.push(currentNode)
 
-            if (currentNode === target) {
+            if (currentNode == target) {
 
                 translatePath(start, target)
-
+                console.log(final)
                 final = smoothPath(final, s)
 
                 return final
             }
 
             for (let node of this.getNeighbours(currentNode)) {
-                if (node.walkable && !closed.includes(node) || node === target) {
+                if ((node.walkable && !closed.includes(node)) || node == target) {
 
                     let newMovementCost = currentNode.gCost + getDistance(currentNode, node);
                     if (newMovementCost < node.gCost || !open.includes(node)) {
@@ -58,7 +58,7 @@ export default class PathFinder {
                 }
             }
         }
-        return false;
+        return [];
 
 
         function getDistance(nodeA, nodeB) {
@@ -75,10 +75,15 @@ export default class PathFinder {
             let start = s
             let final = [];
             let lastSeen = s;
+            let i = 0;
             if (path.length > 1) {
                 for (let node of path) {
-                    console.log(RayCaster.castRay(start, {x: node.x + .5, y: node.y + .5}, that.map))
-                    if (RayCaster.castRay(start, {x: node.x + .5, y: node.y + .5}, that.map)) {
+
+                    i++
+                    if (i !== 1 && !node.doors && RayCaster.castRay(start, {
+                            x: node.x + .5,
+                            y: node.y + .5
+                        }, that.map)) {
                         final.push({x: lastSeen.x + .5, y: lastSeen.y + .5})
                         start = {x: lastSeen.x + .5, y: lastSeen.y + .5}
                         lastSeen = node;
@@ -90,13 +95,13 @@ export default class PathFinder {
 
                     }
                 }
-                final.push({x: lastSeen.x + .5, y: lastSeen.y + .5})
+                final.push({x: lastSeen.x + .5, y: lastSeen.y + .5, doors: lastSeen.doors})
 
             }
             else {
-                final.push({x: lastSeen.x, y: lastSeen.y})
+                final.push({x: lastSeen.x, y: lastSeen.y, doors: lastSeen.doors})
             }
-            console.log(final)
+
             return final;
         }
 
@@ -116,8 +121,12 @@ export default class PathFinder {
         for (let y = 0; y < this.map.getMapSize().y; y++) {
             this.grid[y] = [];
             for (let x = 0; x < this.map.getMapSize().x; x++) {
+                let collision = this.map.checkForCollisions(y, x)
+                if (collision && this.map.checkForDoors(y, x))
+                    this.grid[y][x] = new PathNode(true, x, y, true);
 
-                this.grid[y][x] = new PathNode(!this.map.checkForCollisions(y, x), x, y);
+                else
+                    this.grid[y][x] = new PathNode(!collision, x, y);
 
             }
         }

@@ -7,6 +7,7 @@ export default class Animation extends SpriteSheet {
         this.animations = {};
         this.width = width;
         this.height = height;
+
         this.defineAnimations();
     }
 

@@ -27,7 +27,31 @@
           "wallID":             50,
           "dark":               true,
           "additionalDistance": 0.5,
-          "skip":true
+          "skip":               true
+        }
+      ]
+    }, {
+      "type":   "secret",
+      "event":  "moveWall",
+      "render": [
+        {
+          "x":                  0,
+          "y":                  0,
+          "rotation":           0,
+          "wallID":             -1,
+          "dark":               true,
+          "additionalDistance": 0,
+          "update":             true,
+          "skip":               false
+        }, {
+          "x":                  0,
+          "y":                  0,
+          "rotation":           1,
+          "wallID":             -1,
+          "dark":               true,
+          "additionalDistance": 0,
+          "update":             true,
+          "skip":               false
         }
       ]
     }
