@@ -3,6 +3,8 @@
     "hp":         50,
     "speed":      1,
     "stun":       true,
+    "doors":      true,
+    "diagonal":   false,
     "range":      4,
     "points":     100,
     "damage":     32,
@@ -121,6 +123,127 @@
         "fY": 6,
         "tX": 2,
         "tY": 6
+      }
+    }
+  },
+  "dog":   {
+    "hp":         25,
+    "speed":      3,
+    "stun":       false,
+    "doors":      true,
+    "diagonal":   true,
+    "range":      1.7,
+    "points":     100,
+    "damage":     32,
+    "animations": {
+      "type":   "equal",
+      "stand0": {
+        "fX": 0,
+        "fY": 0,
+        "tX": 0,
+        "tY": 0
+      },
+      "stand1": {
+        "fX": 1,
+        "fY": 0,
+        "tX": 1,
+        "tY": 0
+      },
+      "stand2": {
+        "fX": 2,
+        "fY": 0,
+        "tX": 2,
+        "tY": 0
+      },
+      "stand3": {
+        "fX": 3,
+        "fY": 0,
+        "tX": 3,
+        "tY": 0
+      },
+      "stand4": {
+        "fX": 4,
+        "fY": 0,
+        "tX": 4,
+        "tY": 0
+      },
+      "stand5": {
+        "fX": 5,
+        "fY": 0,
+        "tX": 5,
+        "tY": 0
+      },
+      "stand6": {
+        "fX": 6,
+        "fY": 0,
+        "tX": 6,
+        "tY": 0
+      },
+      "stand7": {
+        "fX": 7,
+        "fY": 0,
+        "tX": 7,
+        "tY": 0
+      },
+      "move0":  {
+        "fX": 0,
+        "fY": 0,
+        "tX": 0,
+        "tY": 3
+      },
+      "move1":  {
+        "fX": 1,
+        "fY": 0,
+        "tX": 1,
+        "tY": 3
+      },
+      "move2":  {
+        "fX": 2,
+        "fY": 0,
+        "tX": 2,
+        "tY": 3
+      },
+      "move3":  {
+        "fX": 3,
+        "fY": 0,
+        "tX": 3,
+        "tY": 3
+      },
+      "move4":  {
+        "fX": 4,
+        "fY": 0,
+        "tX": 4,
+        "tY": 3
+      },
+      "move5":  {
+        "fX": 5,
+        "fY": 0,
+        "tX": 5,
+        "tY": 3
+      },
+      "move6":  {
+        "fX": 6,
+        "fY": 0,
+        "tX": 6,
+        "tY": 3
+      },
+      "move7":  {
+        "fX": 7,
+        "fY": 0,
+        "tX": 7,
+        "tY": 3
+      },
+      "death":  {
+        "fX": 0,
+        "fY": 4,
+        "tX": 3,
+        "tY": 4
+      },
+      "attack": {
+        "fX": 0,
+        "fY": 5,
+        "tX": 2,
+        "tY": 5
       }
     }
   }

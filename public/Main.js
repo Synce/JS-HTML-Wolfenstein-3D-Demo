@@ -61,7 +61,7 @@ addEventListener('DOMContentLoaded', function () {
             map.loadMap(level.map)
             raycaster.setMapSize(map.getMapSize().x, map.getMapSize().y)
 
-            factory2 = new SpecialTilesFactory(settingsTiles, eventhandler);
+            factory2 = new SpecialTilesFactory(settingsTiles, eventhandler, handler, player);
             factory2.setLevel(level.specialTiles)
             factory2.createTilesAndEvents(map)
             factory.setLevel(level.objects);

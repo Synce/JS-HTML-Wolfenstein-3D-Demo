@@ -39,12 +39,12 @@ export default class EntityHandler {
 
         for (let entity of this.entites) {
 
-            if (entity.triggered) {
+            if (entity.triggered && (!entity.diagonal || entity.path.length == 0)) {
 
                 entity.applyPath(this.pathFinder.findWay({x: entity.x, y: entity.y}, {
                     x: this.player.x,
                     y: this.player.y
-                }))
+                }, entity.diagonal))
 
             } else if (entity.patrol && entity.path.length === 0) {
                 if (entity.patrolWay) {
@@ -52,14 +52,14 @@ export default class EntityHandler {
                     entity.applyPath(this.pathFinder.findWay({x: entity.x, y: entity.y}, {
                         x: entity.patrol.x,
                         y: entity.patrol.y
-                    }))
+                    }, entity.diagonal))
                 }
                 else {
                     entity.patrolWay = true;
                     entity.applyPath(this.pathFinder.findWay({x: entity.x, y: entity.y}, {
                         x: entity.prePatrol.x,
                         y: entity.prePatrol.y
-                    }))
+                    }, entity.diagonal))
                 }
             }
             entity.update(time, this.map, this.minimap, this.player, this.getEntites())

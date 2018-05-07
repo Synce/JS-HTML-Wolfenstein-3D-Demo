@@ -14,7 +14,10 @@ export default class HUD {
         for (let i = 0; i < 10; i++) {
             this.numbers.define(228 + i * 9, 41, 9, 16)
         }
-
+        this.weapons = new SpriteSheet(HUDImg)
+        for (let i = 0; i < 3; i++) {
+            this.weapons.define(i * 49, 41, 49, 25)
+        }
 
         this.faceFrame = 0;
 
@@ -35,7 +38,8 @@ export default class HUD {
         let lvl = [];
         let lives = [];
         let amm = [];
-        let flash;
+        let flash = false;
+        let lose;
         if (this.player.hp == 100) {
             hp.push(this.numbers.getSprite(1))
             hp.push(this.numbers.getSprite(0))
@@ -46,6 +50,9 @@ export default class HUD {
             }
             hp.push(this.numbers.getSprite(Math.floor(this.player.hp % 10)))
 
+        }
+        if (this.player.hp == 0) {
+            lose = true;
         }
         let face = Math.floor((100 - this.player.hp) / 14.3)
         let score = this.player.score.toString()
@@ -72,8 +79,10 @@ export default class HUD {
             lvl: lvl,
             lives: lives,
             ammo: amm,
+            hw: this.weapons.getSprite(this.player.weapon - 1),
             weapon: this.weaponsAnimations.getAnimation(weapon, this.player.weaponFrame),
-            flash: flash
+            flash: flash,
+            lose: lose
         }
     }
 }

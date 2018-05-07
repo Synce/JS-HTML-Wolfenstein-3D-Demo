@@ -12,7 +12,7 @@ export default class Object {
 
 
     onStand(map) {
-        console.log(this)
+
         if (this.cb.name) {
             this.player[this.cb.name](this.cb.val);
             map.removeObject(this)

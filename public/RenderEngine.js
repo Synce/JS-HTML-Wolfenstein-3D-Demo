@@ -59,38 +59,54 @@ export default class RenderEngine {
 
         let d = this.entityHandler.getEntityToDraw(id, angle)
 
-        this.ctx.drawImage(this.animationBank.getFrame(d.type, d.animation, d.frame), 0, 0, 64, 64, x, y, size, size);
+        try {
+            this.ctx.drawImage(this.animationBank.getFrame(d.type, d.animation, d.frame), 0, 0, 64, 64, x, y, size, size);
+        }
+        catch {
+            console.log(d)
+        }
     }
 
     drawHUD() {
         let a = this.HUD.getHud();
-        if (a.flash) {
-            this.ctx.fillStyle = "rgba(247, 203, 9,0.3)";
+        if (a.lose) {
+            this.ctx.fillStyle = "#e20606";
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-        }
-        this.ctx.drawImage(a.weapon, 275, 155, 350, 350);
-        this.ctx.drawImage(a.bg, 0, 500, 900, 103);
-        this.ctx.drawImage(a.face, 374, 500, 99, 99);
-        if (a.hp.length == 3) {
-            this.ctx.drawImage(a.hp[0], 475, 533, 25, 55);
-            this.ctx.drawImage(a.hp[1], 495, 533, 25, 55);
-            this.ctx.drawImage(a.hp[2], 520, 533, 25, 55);
-        } else if (a.hp.length == 2) {
-            this.ctx.drawImage(a.hp[0], 490, 533, 25, 55);
-            this.ctx.drawImage(a.hp[1], 515, 533, 25, 55);
-        }
-        else {
-            this.ctx.drawImage(a.hp[0], 515, 533, 25, 55);
-        }
-        for (let i = 0; i < a.sc.length; i++) {
-            this.ctx.drawImage(a.sc[i], 240 - i * 25, 533, 25, 55);
-        }
-        for (let i = 0; i < a.ammo.length; i++) {
-            this.ctx.drawImage(a.ammo[i], 660 - i * 25, 533, 25, 55);
-        }
-        this.ctx.drawImage(a.lives[0], 320, 533, 25, 55);
-        this.ctx.drawImage(a.lvl[0], 50, 533, 25, 55);
+            this.ctx.font = "60px Arial";
 
+            this.ctx.fillStyle = "white";
+            this.ctx.fillText("GAME OVER", this.canvas.width / 2 - 210, this.canvas.height / 2 - 20);
+        } else {
+            if (a.flash) {
+                this.ctx.fillStyle = "rgba(247, 203, 9,0.3)";
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+            }
+
+            this.ctx.drawImage(a.weapon, 275, 155, 350, 350);
+            this.ctx.drawImage(a.bg, 0, 500, 900, 103);
+            this.ctx.drawImage(a.face, 374, 500, 99, 99);
+            if (a.hp.length == 3) {
+                this.ctx.drawImage(a.hp[0], 475, 533, 25, 55);
+                this.ctx.drawImage(a.hp[1], 495, 533, 25, 55);
+                this.ctx.drawImage(a.hp[2], 520, 533, 25, 55);
+            } else if (a.hp.length == 2) {
+                this.ctx.drawImage(a.hp[0], 490, 533, 25, 55);
+                this.ctx.drawImage(a.hp[1], 515, 533, 25, 55);
+            }
+            else {
+                this.ctx.drawImage(a.hp[0], 515, 533, 25, 55);
+            }
+            for (let i = 0; i < a.sc.length; i++) {
+                this.ctx.drawImage(a.sc[i], 240 - i * 25, 533, 25, 55);
+            }
+            for (let i = 0; i < a.ammo.length; i++) {
+                this.ctx.drawImage(a.ammo[i], 660 - i * 25, 533, 25, 55);
+            }
+            this.ctx.drawImage(a.lives[0], 320, 533, 25, 55);
+            this.ctx.drawImage(a.lvl[0], 50, 533, 25, 55);
+            this.ctx.drawImage(a.hw, 720, 510, 190, 75);
+        }
     }
 
     render() {

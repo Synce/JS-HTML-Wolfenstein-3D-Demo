@@ -31,5 +31,9 @@
   "id8":              {
     "name": "giveHp",
     "val":  10
+  },
+  "id29":             {
+    "name": "giveWeapon",
+    "val":  3
   }
 }

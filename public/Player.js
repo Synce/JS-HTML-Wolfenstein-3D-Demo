@@ -61,58 +61,64 @@ export default class Player {
     }
 
     update(time, map, handler) {
-        if (this.pickUp) {
-            if (this.pickUp.update(time) == 1) {
-                this.pickUp = null;
+        if (this.hp > 0) {
+            if (this.pickUp) {
+                if (this.pickUp.update(time) == 1) {
+                    this.pickUp = null;
+                }
+
             }
 
-        }
-        this.move(map, time)
-        if (this.shooting && this.frameUpdater == null && (!this.shooted || !this.weapons[this.weapon - 1].single) && (this.weapon == 1 || this.ammo > 0)) {
-            this.frameUpdater = new TimeHelper(this.weapons[this.weapon - 1].frame * 4, 3);
-            let entites = handler.getEntites()
-            if (this.weapon != 1)
-                this.ammo--;
-            let heap = new Heap(function (x) {
-                return x.dist;
-            });
-            for (let i = 0; i < entites.length; i++) {
-                if (!entites[i].dead) {
-                    let distX = entites[i].x - this.x;
-                    let distY = entites[i].y - this.y;
-                    let dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
-                    entites[i].dist = dist;
-                    let angle = Math.atan2(distY, distX) - this.rotation
+            this.move(map, time)
+            if (this.shooting && this.frameUpdater == null && (!this.shooted || !this.weapons[this.weapon - 1].single) && (this.weapon == 1 || this.ammo > 0)) {
+                this.frameUpdater = new TimeHelper(this.weapons[this.weapon - 1].frame * 4, 3);
+                let entites = handler.getEntites()
+                if (this.weapon != 1)
+                    this.ammo--;
+                let heap = new Heap(function (x) {
+                    return x.dist;
+                });
+                for (let i = 0; i < entites.length; i++) {
+                    if (!entites[i].dead) {
+                        let distX = entites[i].x - this.x;
+                        let distY = entites[i].y - this.y;
+                        let dist = Math.sqrt(Math.pow(distX, 2) + Math.pow(distY, 2));
+                        entites[i].dist = dist;
+                        let angle = Math.atan2(distY, distX) - this.rotation
 
-                    if (checkIfInAngle(angle, Math.radians(60)) && !RayCaster.castRay({x: this.x, y: this.y}, {
-                            x: entites[i].x + .5,
-                            y: entites[i].y + .5
-                        }, map)) {
-                        entites[i].trigger(this, map);
-                        heap.push(entites[i])
+                        if (checkIfInAngle(clampAngle(angle), Math.radians(15)) && !RayCaster.castRay({
+                                x: this.x,
+                                y: this.y
+                            }, {
+                                x: entites[i].x + .5,
+                                y: entites[i].y + .5
+                            }, map, true)) {
+                            entites[i].trigger(this, map);
+                            heap.push(entites[i])
+                        }
                     }
                 }
-            }
-            let target = heap.pop()
-            if (target) {
-                if (this.weapon != 1) {
-                    target.hit(Weapon.dealDMG(target.dist), this, map)
+                let target = heap.pop()
+                if (target) {
+                    if (this.weapon != 1) {
+                        target.hit(Weapon.dealDMG(target.dist), this, map)
+                    }
+                    else if (target.dist < 2) {
+                        target.hit(Math.RNG(0, 255) / 16, this, map)
+                    }
                 }
-                else if (target.dist < 2) {
-                    target.hit(Math.RNG(0, 255) / 16, this, map)
+                this.shooted = true;
+            } else if (this.frameUpdater) {
+                this.weaponFrame = Math.floor(this.frameUpdater.update(time));
+                if (this.weaponFrame == 3) {
+                    this.frameUpdater = null
+                    this.weaponFrame = 0;
                 }
-            }
-            this.shooted = true;
-        } else if (this.frameUpdater) {
-            this.weaponFrame = Math.floor(this.frameUpdater.update(time));
-            if (this.weaponFrame == 3) {
-                this.frameUpdater = null
-                this.weaponFrame = 0;
-            }
 
-        }
-        else if (!this.shooting && this.frameUpdater == null) {
-            this.shooted = false;
+            }
+            else if (!this.shooting && this.frameUpdater == null) {
+                this.shooted = false;
+            }
         }
 
     }
@@ -140,6 +146,12 @@ export default class Player {
         if (flash)
             this.pickUp = new TimeHelper(0.1, 1)
         this.score += val
+
+
+    }
+
+    giveWeapon(val) {
+        this.weapons[val - 1].obtained = true;
 
 
     }

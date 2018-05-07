@@ -15,7 +15,7 @@ export default class EnityFactory {
     createUnits() {
         for (let entity of this.entityArray) {
             let cfg = this.getProperties(entity.type)
-            this.entityHandler.pushEntity(new Entity(entity.type, cfg.hp, cfg.stun, cfg.points, this.countAnimationFrames(cfg.animations), cfg.damage, cfg.speed, cfg.range, entity.x, entity.y, Math.radians(entity.rotation), entity.patrol, this.objF))
+            this.entityHandler.pushEntity(new Entity(entity.type, cfg.hp, cfg.stun, cfg.points, this.countAnimationFrames(cfg.animations), cfg.damage, cfg.speed, cfg.range, entity.x, entity.y, Math.radians(entity.rotation), entity.patrol, this.objF, cfg.doors, cfg.diagonal))
         }
     }
 

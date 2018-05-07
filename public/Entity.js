@@ -6,7 +6,7 @@ import Weapon from "./Weapon.js";
 import {checkIfInAngle} from "./Utilities.js";
 
 export default class Entity {
-    constructor(type, hp, stun, points, animations, damage, speed, range, x, y, rotation, patrol = false, factory) {
+    constructor(type, hp, stun, points, animations, damage, speed, range, x, y, rotation, patrol = false, factory, doors, diagonal) {
         this.hp = hp;
         this.type = type;
         this.stun = stun;
@@ -16,6 +16,8 @@ export default class Entity {
         this.speed = speed;
         this.x = x;
         this.objFactory = factory;
+        this.doors = doors;
+        this.diagonal = diagonal;
         this.y = y;
         this.patrol = patrol;
 
@@ -46,9 +48,11 @@ export default class Entity {
 
     applyPath(path) {
         this.path = path;
+
     }
 
     update(time, map, minimap, player, entities) {
+
         if (!this.triggered) {
             this.trigger(player, map)
         } else {
@@ -71,7 +75,7 @@ export default class Entity {
 
             if (this.frame == this.animations['death'].frames - 1) {
 
-                this.frame = 4;
+                this.frame = this.animations['death'].frames - 1;
             } else {
                 this.frame = Math.floor(this.frameUpdater.update(time));
             }
@@ -140,14 +144,21 @@ export default class Entity {
         if (this.path.length > 0 && Math.pow(this.path[0].x - this.x, 2) + Math.pow(this.path[0].y - this.y, 2) < Math.pow(this.speed * time, 2)) {
             this.path.shift()
         }
-      
+
 
         if (this.path.length > 0) {
+            let dist = Math.sqrt(Math.pow(this.path[0].x - this.x, 2) + Math.pow(this.path[0].y - this.y, 2));
+
+            if (this.path[0].doors && dist < 1.8 && this.doors) {
+                let doors = map.getSpecialTile(Math.floor(this.path[0].y), Math.floor(this.path[0].x))
+                doors.open(true)
+
+            }
 
             if (!this.moving) {
                 this.moving = true;
                 let frames = this.animations['move'].frames
-                this.frameUpdater = new TimeHelper(frames * 0.2, frames)
+                this.frameUpdater = new TimeHelper(frames * 0.2 / this.speed, frames)
             }
 
             this.frame = Math.floor(this.frameUpdater.update(time));
@@ -190,8 +201,8 @@ export default class Entity {
             this.dead = true;
             player.giveScore(100, false)
 
-
-            this.objFactory.createObject(28, Math.floor(this.x), Math.floor(this.y));
+            if (this.type != 'dog')
+                this.objFactory.createObject(28, Math.floor(this.x), Math.floor(this.y));
 
 
         }
@@ -201,6 +212,7 @@ export default class Entity {
     }
 
     trigger(player, map, skip = false) {
+
         if (!RayCaster.castRay({x: this.x, y: this.y}, {
                 x: player.x,
                 y: player.y,
@@ -208,9 +220,10 @@ export default class Entity {
             let distX = player.x - this.x;
             let distY = player.y - this.y;
 
-            let angle = Math.atan2(distY, distX) - this.rotation
+            let angle = Math.atan2(distY, distX) + this.rotation
 
-            if (skip || checkIfInAngle(angle, Math.radians(60))) {
+            if (skip || checkIfInAngle(clampAngle(angle), Math.radians(30))) {
+
                 this.path = [];
                 this.moving = false
                 this.frame = 0;

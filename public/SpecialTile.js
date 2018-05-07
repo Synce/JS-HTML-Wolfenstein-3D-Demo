@@ -1,7 +1,8 @@
 import TimeHelper from "./TimeHelper.js";
 
+
 export default class SpecialTile {
-    constructor(x, y, render, type, move = {}, wallID = 2) {
+    constructor(x, y, render, type, player, entities, move = {}, wallID = 2) {
         this.x = x;
         this.y = y;
         this.render = render;
@@ -11,16 +12,14 @@ export default class SpecialTile {
         this.moveTo = move;
         this.offsetX = 0;
         this.offsetY = 0;
-        if (type == "secret") {
-            this.offsetX = 0.5;
-            this.offsetY = 0;
-        }
+        this.player = player;
+        this.entities = entities;
         this.timeHelper = new TimeHelper(1, 64)
         this.walkable = false;
         this.needsFix = false;
     }
 
-    openDoors(time, x, y) {
+    openDoors(time) {
         if (this.state != 0 && this.state != 3) {
 
             if (this.needsFix) {
@@ -61,15 +60,58 @@ export default class SpecialTile {
             }
         }
 
-        let distance = Math.sqrt(Math.pow(this.y + 0.5 - y, 2) + Math.pow(this.x + 0.5 - x, 2))
+
+        let distance = Math.sqrt(Math.pow(this.y + 0.5 - this.player.y, 2) + Math.pow(this.x + 0.5 - this.player.x, 2))
+        for (let entity of this.entities) {
+            let bufor = Math.sqrt(Math.pow(this.y + 0.5 - entity.y, 2) + Math.pow(this.x + 0.5 - entity.x, 2))
+            if (bufor < distance)
+                distance = bufor;
+        }
+
         if (this.wait && this.wait.update(time) === 1 && distance >= .7) {
             this.wait = null;
             this.state = 2;
         }
     }
 
-    moveWall() {
+    open(i = false) {
+        if (!i) {
+            switch (this.state) {
+                case 0: {
+                    this.state++
+                    break;
+                }
+                case 1: {
+                    this.state++
+                    this.needsFix = true;
+                    break;
+                }
+                case 2: {
+                    this.state--
+                    this.needsFix = true;
+                    break;
+                }
+                case 3: {
+                    this.state--;
+                    break;
+                }
+            }
+        }
+        else {
+            switch (this.state) {
+                case 0: {
+                    this.state++
+                    break;
+                }
+                case 2: {
+                    this.state--
+                    this.needsFix = true;
+                    break;
+                }
 
+            }
+        }
     }
+
 
 }

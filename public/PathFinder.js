@@ -10,7 +10,7 @@ export default class PathFinder {
 
     }
 
-    findWay(s, meta) {
+    findWay(s, meta, diagonal = false) {
         let that = this;
 
         let final = [];
@@ -32,30 +32,32 @@ export default class PathFinder {
             if (currentNode == target) {
 
                 translatePath(start, target)
-                console.log(final)
+
                 final = smoothPath(final, s)
 
                 return final
             }
 
             for (let node of this.getNeighbours(currentNode)) {
-                if ((node.walkable && !closed.includes(node)) || node == target) {
 
-                    let newMovementCost = currentNode.gCost + getDistance(currentNode, node);
-                    if (newMovementCost < node.gCost || !open.includes(node)) {
-                        node.gCost = newMovementCost;
-                        node.hCost = getDistance(node, target)
-                        node.parent = currentNode;
+                if (!diagonal || ((node.x != Math.floor(currentNode.x) && node.y != Math.floor(currentNode.y)) || node == target))
+                    if ((node.walkable && !closed.includes(node)) || node == target) {
 
-                        if (!open.includes(node))
-                            open.push(node)
-                        else {
-                            open.goUp(open.content.indexOf(node));
+                        let newMovementCost = currentNode.gCost + getDistance(currentNode, node);
+                        if (newMovementCost < node.gCost || !open.includes(node)) {
+                            node.gCost = newMovementCost;
+                            node.hCost = getDistance(node, target)
+                            node.parent = currentNode;
+
+                            if (!open.includes(node))
+                                open.push(node)
+                            else {
+                                open.goUp(open.content.indexOf(node));
+                            }
+
+
                         }
-
-
                     }
-                }
             }
         }
         return [];
@@ -76,15 +78,16 @@ export default class PathFinder {
             let final = [];
             let lastSeen = s;
             let i = 0;
+
             if (path.length > 1) {
                 for (let node of path) {
 
                     i++
-                    if (i !== 1 && !node.doors && RayCaster.castRay(start, {
+                    if (i !== 1 && diagonal || (!node.doors && RayCaster.castRay(start, {
                             x: node.x + .5,
                             y: node.y + .5
-                        }, that.map)) {
-                        final.push({x: lastSeen.x + .5, y: lastSeen.y + .5})
+                        }, that.map))) {
+                        final.push({x: lastSeen.x + .5, y: lastSeen.y + .5, doors: lastSeen.doors})
                         start = {x: lastSeen.x + .5, y: lastSeen.y + .5}
                         lastSeen = node;
 
@@ -96,6 +99,7 @@ export default class PathFinder {
                     }
                 }
                 final.push({x: lastSeen.x + .5, y: lastSeen.y + .5, doors: lastSeen.doors})
+
 
             }
             else {
@@ -138,10 +142,13 @@ export default class PathFinder {
         for (let x = -1; x <= 1; x++) {
             for (let y = -1; y <= 1; y++) {
                 if (x != 0 || y != 0) {
+
+
                     let checkX = node.x + x;
                     let checkY = node.y + y;
                     if (checkX >= 0 && this.map.getMapSize().x && checkY >= 0 && this.map.getMapSize().y)
                         tab.push(this.grid[checkY][checkX])
+
                 }
             }
         }

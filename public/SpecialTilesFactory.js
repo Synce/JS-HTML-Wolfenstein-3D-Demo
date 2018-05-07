@@ -3,9 +3,11 @@ import Event from './Event.js'
 
 
 export default class SpecialTilesFactory {
-    constructor(settings, eventHandler) {
+    constructor(settings, eventHandler, entityHandler, player) {
         this.settings = settings;
         this.eventHandler = eventHandler;
+        this.player = player;
+        this.entityHandler = entityHandler;
     }
 
     setLevel(tilesArray) {
@@ -70,7 +72,7 @@ export default class SpecialTilesFactory {
         }
         if (tile.move)
             return new SpecialTile(tile.x, tile.y, renderArr, tile.type, tile.move)
-        return new SpecialTile(tile.x, tile.y, renderArr, tile.type)
+        return new SpecialTile(tile.x, tile.y, renderArr, tile.type, this.player, this.entityHandler.getEntites())
 
     }
 
