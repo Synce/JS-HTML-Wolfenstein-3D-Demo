@@ -74,6 +74,9 @@ export default class SpecialTile {
         }
     }
 
+    end() {
+    }
+
     open(i = false) {
         if (!i) {
             switch (this.state) {

@@ -22,8 +22,10 @@ export default class EventHandler {
                 let angle = Math.atan2(event.y + 0.5 - this.player.y, event.x + 0.5 - this.player.x) - this.player.rotation;
                 let distance = Math.sqrt(Math.pow(event.y + 0.5 - this.player.y, 2) + Math.pow(event.x + 0.5 - this.player.x, 2))
                 if (distance <= 2 && distance >= 0.7 && checkIfInAngle(angle, this.fov)) {
-                    event.object.open();
-
+                    if (event.action == 'openDoors')
+                        event.object.open();
+                    else
+                        this.player.end = true;
 
                 }
             }

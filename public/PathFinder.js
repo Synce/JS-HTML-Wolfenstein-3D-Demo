@@ -82,13 +82,19 @@ export default class PathFinder {
             if (path.length > 1) {
                 for (let node of path) {
 
-                    i++
-                    if (i !== 1 && diagonal || (!node.doors && RayCaster.castRay(start, {
+
+                    if (diagonal || (!node.doors && RayCaster.castRay(start, {
                             x: node.x + .5,
                             y: node.y + .5
                         }, that.map))) {
-                        final.push({x: lastSeen.x + .5, y: lastSeen.y + .5, doors: lastSeen.doors})
-                        start = {x: lastSeen.x + .5, y: lastSeen.y + .5}
+                        if (lastSeen.x % 1 != 0 && lastSeen.y % 1 != 0) {
+                            final.push({x: lastSeen.x, y: lastSeen.y, doors: lastSeen.doors})
+                            start = {x: lastSeen.x, y: lastSeen.y}
+                        } else {
+                            final.push({x: lastSeen.x + .5, y: lastSeen.y + .5, doors: lastSeen.doors})
+                            start = {x: lastSeen.x + .5, y: lastSeen.y + .5}
+
+                        }
                         lastSeen = node;
 
 
@@ -224,6 +230,8 @@ export default class PathFinder {
                     }
 
         }
+
+
         return {x: toX, y: toY}
     }
 

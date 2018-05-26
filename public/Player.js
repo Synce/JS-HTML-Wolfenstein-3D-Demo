@@ -7,7 +7,7 @@ import Weapon from "./Weapon.js";
 import RayCaster from "./Raycaster.js";
 
 export default class Player {
-    constructor(x, y, moveSpeed, rotSpeed) {
+    constructor(x, y, moveSpeed, rotSpeed, lives) {
         this.x = x;
         this.y = y;
         this.direction = 0;	//  lewo(-1) / prawo(1)
@@ -19,7 +19,7 @@ export default class Player {
 
         this.score = 0;
         this.lvl = 1;
-        this.lives = 3;
+        this.lives = lives;
         this.weapon = 2;
         this.ammo = 8;
         this.weapons = [];
@@ -31,9 +31,10 @@ export default class Player {
     }
 
     move(map, time) {
-        //console.log(this.x, this.y)
-        let move = this.speed * this.moveSpeed * time;
 
+        let move = this.speed * this.moveSpeed * time;
+        if (move > 0.5)
+            move = 0.3
         this.rotation += this.direction * this.rotSpeed * time;
         this.rotation = clampAngle(this.rotation)
 
@@ -157,7 +158,7 @@ export default class Player {
     }
 
     hit(dmg) {
-        this.hp -= dmg;
+        //  this.hp -= dmg;
         if (this.hp < 0) {
             this.hp = 0;
         }

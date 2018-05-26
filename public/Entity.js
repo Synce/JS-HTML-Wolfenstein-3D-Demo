@@ -108,6 +108,13 @@ export default class Entity {
                 }
 
                 this.frame = Math.floor(this.frameUpdater.update(time));
+
+                if (this.frame >= this.animations['attack'].frames) {
+                    this.frameUpdater.reset();
+                    this.shootTimer.reset()
+                    this.frame = 1;
+                }
+
                 if (this.frame == 2 && !this.shot) {
                     this.shot = true;
                     let distX = this.x - player.x;
@@ -118,11 +125,7 @@ export default class Entity {
 
                 }
 
-                if (this.frame == this.animations['attack'].frames) {
-                    this.frameUpdater.reset();
-                    this.shootTimer.reset()
-                    this.frame = 1;
-                }
+
                 this.state = 'attack'
             }
             else {
@@ -162,7 +165,7 @@ export default class Entity {
             }
 
             this.frame = Math.floor(this.frameUpdater.update(time));
-            if (this.frame == this.animations['move'].frames) {
+            if (this.frame >= this.animations['move'].frames) {
                 this.frameUpdater.reset();
                 this.frame = 0;
             }
@@ -174,16 +177,19 @@ export default class Entity {
             }
             this.state = 'move'
             let move = this.speed * time;
-
+            if (move > 0.5)
+                move = 0.3
             let angle = Math.atan2(this.path[0].y - this.y, this.path[0].x - this.x);
             this.rotation = -angle
 
 
             let goX = this.x + Math.cos(angle) * move;
             let goY = this.y + Math.sin(angle) * move;
-            let pos = PathFinder.checkCollisions(goX, goY, .2, map)
+            let pos = PathFinder.checkCollisions(goX, goY, .4, map)
+
             this.x = pos.x > 0 ? pos.x : this.x;
             this.y = pos.y > 0 ? pos.y : this.y;
+
 
         }
         else {
@@ -201,7 +207,7 @@ export default class Entity {
             this.dead = true;
             player.giveScore(100, false)
 
-            if (this.type != 'dog')
+            if (this.type != '211')
                 this.objFactory.createObject(28, Math.floor(this.x), Math.floor(this.y));
 
 

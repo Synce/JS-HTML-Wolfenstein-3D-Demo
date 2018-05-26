@@ -39,7 +39,7 @@ export default class EntityHandler {
 
         for (let entity of this.entites) {
 
-            if (entity.triggered && (!entity.diagonal || entity.path.length == 0)) {
+            if (entity.triggered) {
 
                 entity.applyPath(this.pathFinder.findWay({x: entity.x, y: entity.y}, {
                     x: this.player.x,

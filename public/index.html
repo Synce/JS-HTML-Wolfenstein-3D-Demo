@@ -3,11 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Wolf</title>
+    <style>
+
+        body {
+            background-color: #1C96CF;
+        }
+
+        #canvas {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #minimap {
+            position: absolute;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        #button {
+            color: white;
+            background-color: #4d1507;
+            width: 150px;
+            box-sizing: border-box;
+            text-align: center;
+            padding-top: 5px;
+            font-size: 30px;
+            cursor: pointer;
+            height: 50px;
+            border: 2px groove gold;
+            position: absolute;
+            bottom: 10%;
+            left: 50%;
+            transform: translateX(-50%);
+
+        }
+
+    </style>
 </head>
 <body>
 <script type="module" src="Main.js"></script>
 <canvas id="canvas"></canvas>
 <canvas id="minimap"></canvas>
+
 
 </body>
 </html>

@@ -1,6 +1,7 @@
 import WallsSpriteSheet from "./WallsSpriteSheet.js";
 import SpriteSheet from "./SpriteSheet.js";
 import Heap from "./Heap.js";
+import TimeHelper from "./TimeHelper.js";
 
 export default class RenderEngine {
     constructor(canvas, handler) {
@@ -67,15 +68,18 @@ export default class RenderEngine {
         }
     }
 
-    drawHUD() {
+    drawHUD(delta) {
         let a = this.HUD.getHud();
         if (a.lose) {
             this.ctx.fillStyle = "#e20606";
             this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
             this.ctx.font = "60px Arial";
+            if (!this.dead) {
+                this.dead = new TimeHelper(2, 1);
+            }
 
             this.ctx.fillStyle = "white";
-            this.ctx.fillText("GAME OVER", this.canvas.width / 2 - 210, this.canvas.height / 2 - 20);
+            this.ctx.fillText("YOU ARE DEAD", this.canvas.width / 2 - 210, this.canvas.height / 2 - 20);
         } else {
             if (a.flash) {
                 this.ctx.fillStyle = "rgba(247, 203, 9,0.3)";
@@ -109,7 +113,7 @@ export default class RenderEngine {
         }
     }
 
-    render() {
+    render(delta) {
 
 
         while (this.objects.length() > 0 || this.strips.length() > 0 || this.entities.length() > 0) {
@@ -142,7 +146,7 @@ export default class RenderEngine {
         this.strips.content = [];
         this.objects.content = [];
         this.entities.content = [];
-        this.drawHUD()
+        this.drawHUD(delta)
     }
 
 }

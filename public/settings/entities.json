@@ -128,11 +128,11 @@
   },
   "dog":   {
     "hp":         25,
-    "speed":      3,
+    "speed":      2,
     "stun":       false,
     "doors":      true,
-    "diagonal":   true,
-    "range":      1.7,
+    "diagonal":   false,
+    "range":      2,
     "points":     100,
     "damage":     32,
     "animations": {
