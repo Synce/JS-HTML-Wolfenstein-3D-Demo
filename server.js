@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 8080;
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({extended: true})); // for parsing application
-app.use(express.static(__dirname + 'public'))
+app.use(express.static(__dirname + '/public'))
 
 app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname + "/public/index.html"))
