@@ -46,12 +46,12 @@ function loadGame() {
         loadImage('/textures/HUD.png'),
         loadImage('/textures/BJ.png'),
         loadImage('/textures/weapons.png'),
-        loadJSON('/Levels/1-1.JSON'),
-        loadJSON('settings/objectSettings.JSON'),
-        loadJSON('settings/specialTilesSettings.JSON'),
-        loadJSON('settings/entities.JSON'),
-        loadJSON('settings/HUDSettings.JSON'),
-        loadJSON('settings/weapons.JSON')
+        loadJSON('/levels/lvl.JSON'),
+        loadJSON('/settings/objectSettings.JSON'),
+        loadJSON('/settings/specialTilesSettings.JSON'),
+        loadJSON('/settings/entities.JSON'),
+        loadJSON('/settings/HUDSettings.JSON'),
+        loadJSON('/settings/weapons.JSON')
 
     ]).then(
         function ([walls, objects, hudIMG, BJ, weaponsimg, level, settingsOBJ, settingsTiles, settingsEntity, hudSett, wsettings]) {
