@@ -46,10 +46,10 @@ function loadGame() {
         loadImage('/textures/HUD.png'),
         loadImage('/textures/BJ.png'),
         loadImage('/textures/weapons.png'),
-        loadJSON('/levels/lvl.JSON'),
-        loadJSON('/settings/objectSettings.JSON'),
+        loadJSON('/levels/lvl.json'),
+        loadJSON('/settings/objectSettings.json'),
         loadJSON('/settings/specialTilesSettings.JSON'),
-        loadJSON('/settings/entities.JSON'),
+        loadJSON('/settings/entities.json'),
         loadJSON('/settings/HUDSettings.JSON'),
         loadJSON('/settings/weapons.JSON')
 
