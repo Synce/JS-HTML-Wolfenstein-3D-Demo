@@ -8,7 +8,7 @@ const PORT = process.env.PORT || 8080;
 var app = express();
 app.use(bodyParser.json()); // for parsing application/json
 app.use(bodyParser.urlencoded({extended: true})); // for parsing application
-app.use(express.static('public'))
+app.use(express.static(__dirname + 'public'))
 
 app.get("/", function (req, res) {
     res.sendFile(path.join(__dirname + "/public/index.html"))
@@ -22,6 +22,6 @@ app.get("/*", function (req, res) {
 })
 
 app.listen(PORT, function () {
-    console.log("start serwera na porcie ")
+    console.log('Our app is running on http://localhost:' + port);
 })
 
