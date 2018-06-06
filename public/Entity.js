@@ -207,7 +207,7 @@ export default class Entity {
             this.dead = true;
             player.giveScore(100, false)
 
-            if (this.type != '211')
+            if (this.type != 'dog')
                 this.objFactory.createObject(28, Math.floor(this.x), Math.floor(this.y));
 
 

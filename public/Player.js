@@ -158,7 +158,7 @@ export default class Player {
     }
 
     hit(dmg) {
-        //  this.hp -= dmg;
+        this.hp -= dmg;
         if (this.hp < 0) {
             this.hp = 0;
         }
