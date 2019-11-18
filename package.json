@@ -8,7 +8,7 @@
     "test":  "echo \"Error: no test specified\" && exit 1"
   },
   "dependencies": {
-    "serve": "^6.1.0"
+    "serve": "^11.2.0"
   },
   "author":       "",
   "license":      "ISC"
